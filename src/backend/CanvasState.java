@@ -1,11 +1,9 @@
 package backend;
 
 import backend.drawable.DrawableFigure;
-import backend.model.Figure;
+import backend.model.Point;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 
 public class CanvasState {
@@ -13,7 +11,7 @@ public class CanvasState {
     private int lowerZIndex = INITIAL_ZINDEX;
     private int higherZIndex = INITIAL_ZINDEX;
 
-    private final Set<DrawableFigure> list = new TreeSet<>();
+    private final TreeSet<DrawableFigure> list = new TreeSet<>();
 
     public void addFigure(DrawableFigure figure) {
         list.add(figure);
@@ -25,5 +23,15 @@ public class CanvasState {
 
     public Iterable<DrawableFigure> figures() {
         return new TreeSet<>(list);
+    }
+
+    public Optional<DrawableFigure> getFigure(Point p){
+        for(Iterator<DrawableFigure> it = this.list.descendingIterator(); it.hasNext();){
+            DrawableFigure currentFigure = it.next();
+            if(currentFigure.includesPoint(p)) {
+                return Optional.of(currentFigure);
+            }
+        }
+        return Optional.empty();
     }
 }

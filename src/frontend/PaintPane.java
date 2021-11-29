@@ -18,6 +18,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.Iterator;
+import java.util.Optional;
+
 public class PaintPane extends BorderPane {
 
 	// BackEnd
@@ -92,7 +95,7 @@ public class PaintPane extends BorderPane {
 			boolean found = false;
 			StringBuilder label = new StringBuilder();
 			for(Figure figure : canvasState.figures()) {
-				if(figureBelongs(figure, eventPoint)) {
+				if(figure.includesPoint(eventPoint)) {
 					found = true;
 					label.append(figure.toString());
 				}
@@ -104,28 +107,22 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		// TODO: HAY QUE CAMBIARLO CUANDO SE AGUREGUE EL BELONGS
-//		canvas.setOnMouseClicked(event -> {
-//			if(selectionButton.isSelected()) {
-//				Point eventPoint = new Point(event.getX(), event.getY());
-//				boolean found = false;
-//				StringBuilder label = new StringBuilder("Se seleccionó: ");
-//				for (Figure figure : canvasState.figures()) {
-//					if(figureBelongs(figure, eventPoint)) {
-//						found = true;
-//						selectedFigure = figure;
-//						label.append(figure.toString());
-//					}
-//				}
-//				if (found) {
-//					statusPane.updateStatus(label.toString());
-//				} else {
-//					selectedFigure = null;
-//					statusPane.updateStatus("Ninguna figura encontrada");
-//				}
-//				redrawCanvas();
-//			}
-//		});
+		canvas.setOnMouseClicked(event -> {
+			if(selectionButton.isSelected()) {
+				Point eventPoint = new Point(event.getX(), event.getY());
+				StringBuilder label = new StringBuilder("Se seleccionó: ");
+				Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
+				if(figureFound.isPresent()){
+					selectedFigure = figureFound.get();
+					label.append(selectedFigure);
+					statusPane.updateStatus(label.toString());
+				} else {
+					selectedFigure = null;
+					statusPane.updateStatus("Ninguna figura encontrada");
+				}
+				redrawCanvas();
+			}
+		});
 
 		canvas.setOnMouseDragged(event -> {
 			if(selectionButton.isSelected()) {
@@ -148,19 +145,4 @@ public class PaintPane extends BorderPane {
 			figure.draw(gc, figure == selectedFigure);
 		}
 	}
-
-	boolean figureBelongs(Figure figure, Point eventPoint) {
-		boolean found = false;
-		if(figure instanceof Rectangle) {
-			Rectangle rectangle = (Rectangle) figure;
-			found = eventPoint.getX() > rectangle.getTopLeft().getX() && eventPoint.getX() < rectangle.getBottomRight().getX() &&
-					eventPoint.getY() > rectangle.getTopLeft().getY() && eventPoint.getY() < rectangle.getBottomRight().getY();
-		} else if(figure instanceof Circle) {
-			Circle circle = (Circle) figure;
-			found = Math.sqrt(Math.pow(circle.getCenterPoint().getX() - eventPoint.getX(), 2) +
-					Math.pow(circle.getCenterPoint().getY() - eventPoint.getY(), 2)) < circle.getRadius();
-		}
-		return found;
-	}
-
 }

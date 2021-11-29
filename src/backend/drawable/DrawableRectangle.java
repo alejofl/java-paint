@@ -27,4 +27,14 @@ public class DrawableRectangle extends DrawableFigure {
         figure.getTopLeft().move(diffX, diffY);
         figure.getBottomRight().move(diffX, diffY);
     }
+
+    @Override
+    public boolean includesPoint(Point p) {
+        return this.figure.includesPoint(p);
+    }
+
+    @Override
+    public String toString(){
+        return this.figure.toString();
+    }
 }

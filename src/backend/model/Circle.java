@@ -23,4 +23,10 @@ public class Circle extends Figure {
         return radius;
     }
 
+    @Override
+    public boolean includesPoint(Point p){
+        return Math.sqrt(Math.pow(this.getCenterPoint().getX() - p.getX(), 2) +
+                Math.pow(this.getCenterPoint().getY() - p.getY(), 2)) < this.getRadius();
+    }
+
 }

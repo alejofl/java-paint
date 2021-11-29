@@ -22,4 +22,9 @@ public class Rectangle extends Figure {
         return String.format("Rectángulo [ %s , %s ]", topLeft, bottomRight);
     }
 
+    @Override
+    public boolean includesPoint(Point p){
+        return p.getX() > this.getTopLeft().getX() && p.getX() < this.getBottomRight().getX() &&
+                p.getY() > this.getTopLeft().getY() && p.getY() < this.getBottomRight().getY();
+    }
 }
