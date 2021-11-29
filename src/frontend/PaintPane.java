@@ -69,13 +69,13 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
-			if(startPoint == null) {
+			if (startPoint == null) {
 				return ;
 			}
-			if(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
+			if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
 				return ;
 			}
-			DrawableFigure newFigure = null;
+			DrawableFigure newFigure;
 			if(rectangleButton.isSelected()) {
 				newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
 			}
@@ -92,16 +92,9 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
-			boolean found = false;
-			StringBuilder label = new StringBuilder();
-			for(Figure figure : canvasState.figures()) {
-				if(figure.includesPoint(eventPoint)) {
-					found = true;
-					label.append(figure.toString());
-				}
-			}
-			if(found) {
-				statusPane.updateStatus(label.toString());
+			Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
+			if (figureFound.isPresent()) {
+				statusPane.updateStatus(figureFound.get().toString());
 			} else {
 				statusPane.updateStatus(eventPoint.toString());
 			}
@@ -112,7 +105,7 @@ public class PaintPane extends BorderPane {
 				Point eventPoint = new Point(event.getX(), event.getY());
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
 				Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
-				if(figureFound.isPresent()){
+				if (figureFound.isPresent()) {
 					selectedFigure = figureFound.get();
 					label.append(selectedFigure);
 					statusPane.updateStatus(label.toString());
