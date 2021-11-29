@@ -2,7 +2,7 @@ package backend.model;
 
 public class Point {
 
-    public double x, y;
+    private double x, y;
 
     public Point(double x, double y) {
         move(x, y);

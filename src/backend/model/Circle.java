@@ -2,8 +2,8 @@ package backend.model;
 
 public class Circle extends Figure {
 
-    protected final Point centerPoint;
-    protected final double radius;
+    private final Point centerPoint;
+    private final double radius;
 
     public Circle(Point centerPoint, double radius) {
         this.centerPoint = centerPoint;

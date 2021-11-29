@@ -13,8 +13,8 @@ public class DrawableCircle extends DrawableFigure {
     }
 
     @Override
-    public void draw(GraphicsContext gc) {
-        super.draw(gc);
+    public void draw(GraphicsContext gc, boolean selected) {
+        super.draw(gc, selected);
         double diameter = figure.getRadius() * 2;
         gc.fillOval(figure.getCenterPoint().getX() - figure.getRadius(), figure.getCenterPoint().getY() - figure.getRadius(), diameter, diameter);
         gc.strokeOval(figure.getCenterPoint().getX() - figure.getRadius(), figure.getCenterPoint().getY() - figure.getRadius(), diameter, diameter);

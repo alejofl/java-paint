@@ -9,6 +9,7 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
     protected Color fillColor;
     protected double lineWidth;
     private int zIndex;
+    private final static Color SELECTED_COLOR = Color.RED;
 
     public DrawableFigure(int zIndex, Color strokeColor, Color fillColor, double lineWidth) {
         this.zIndex = zIndex;
@@ -33,8 +34,12 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
         this.zIndex = zIndex;
     }
 
-    public void draw(GraphicsContext gc) {
-        gc.setStroke(strokeColor);
+    public void draw(GraphicsContext gc, boolean selected) {
+        if (selected) {
+            gc.setStroke(SELECTED_COLOR);
+        } else {
+            gc.setStroke(strokeColor);
+        }
         gc.setFill(fillColor);
         gc.setLineWidth(lineWidth);
     }
