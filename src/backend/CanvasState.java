@@ -25,10 +25,9 @@ public class CanvasState {
         return new TreeSet<>(list);
     }
 
-    public Optional<DrawableFigure> getFigure(Point p){
-        for(Iterator<DrawableFigure> it = this.list.descendingIterator(); it.hasNext();){
-            DrawableFigure currentFigure = it.next();
-            if(currentFigure.includesPoint(p)) {
+    public Optional<DrawableFigure> getFigure(Point p) {
+        for (DrawableFigure currentFigure : list.descendingSet()) {
+            if (currentFigure.includesPoint(p)) {
                 return Optional.of(currentFigure);
             }
         }
