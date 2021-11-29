@@ -5,8 +5,7 @@ public class Point {
     public double x, y;
 
     public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
+        move(x, y);
     }
 
     public double getX() {
@@ -20,6 +19,12 @@ public class Point {
     @Override
     public String toString() {
         return String.format("{%.2f , %.2f}", x, y);
+    }
+
+    //REVISAR
+    public void move(double x, double y) {
+        this.x += x;
+        this.y += y;
     }
 
 }
