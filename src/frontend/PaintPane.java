@@ -1,7 +1,7 @@
 package frontend;
 
 import backend.CanvasState;
-import backend.drawable.DrawableCircle;
+//import backend.drawable.DrawableCircle;
 import backend.drawable.DrawableFigure;
 import backend.drawable.DrawableRectangle;
 import backend.model.Figure;
@@ -103,13 +103,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(fillColorPicker);
 
 		deleteButton.setOnAction(event -> {
-			if (selector.noSelection()) {
-				noSelectionAlert();
-				return;
-			}
-			selector.getSelectedFigures().forEach(canvasState::remove);
-			selector.clearSelection();
-			redrawCanvas();
+			deleteFigure();
 		});
 
 		sendToBackButton.setOnAction(event -> {
@@ -192,7 +186,7 @@ public class PaintPane extends BorderPane {
 				}
 				else if (circleButton.isSelected()) {
 					double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-					newFigure = new DrawableCircle(startPoint, circleRadius, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+//					newFigure = new DrawableCircle(startPoint, circleRadius, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
 				} else if (squareButton.isSelected()) {
 					// TODO
 				} else if (ellipseButton.isSelected()) {
@@ -258,6 +252,16 @@ public class PaintPane extends BorderPane {
 	}
 
 	private void clearSelectionAndRedraw() {
+		selector.clearSelection();
+		redrawCanvas();
+	}
+
+	protected void deleteFigure() {
+		if (selector.noSelection()) {
+			noSelectionAlert();
+			return;
+		}
+		selector.getSelectedFigures().forEach(canvasState::remove);
 		selector.clearSelection();
 		redrawCanvas();
 	}
