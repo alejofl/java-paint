@@ -39,14 +39,18 @@ public class CanvasState {
     }
 
     public void bringToFront(DrawableFigure figure) {
-        list.remove(figure);
+        remove(figure);
         figure.setzIndex(getHigherZIndex());
         addFigure(figure);
     }
 
     public void sendToBack(DrawableFigure figure) {
-        list.remove(figure);
+        remove(figure);
         figure.setzIndex(getLowerZIndex());
         addFigure(figure);
+    }
+
+    public void remove(DrawableFigure figure) {
+        list.remove(figure);
     }
 }
