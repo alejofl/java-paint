@@ -36,7 +36,7 @@ public class DrawableCircle extends DrawableFigure {
     }
 
     @Override
-    public Point[] limits() {
+    public Limits limits() {
         return figure.limits();
     }
 

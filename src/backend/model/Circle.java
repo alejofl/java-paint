@@ -30,10 +30,10 @@ public class Circle extends Figure {
     }
 
     @Override
-    public Point[] limits() {
-        return new Point[]{
+    public Limits limits() {
+        return new Limits(
                 new Point(getCenterPoint().getX() - radius, getCenterPoint().getY() - radius),
                 new Point(getCenterPoint().getX() + radius, getCenterPoint().getY() + radius)
-        };
+        );
     }
 }

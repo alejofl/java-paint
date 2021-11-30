@@ -104,7 +104,6 @@ public class PaintPane extends BorderPane {
 		});
 
 		sendToBackButton.setOnAction(event -> {
-			System.out.println(selector.getSelectedFigures());
 			if (selector.noSelection()) {
 				noSelectionAlert();
 				return;
@@ -148,15 +147,18 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMousePressed(event -> {
-			Point curr = new Point(event.getX(), event.getY());
+			startPoint = new Point(event.getX(), event.getY());
 
-			if (!selector.noSelection() && !selector.isPointInSelection(curr)) {
+			if (!selector.noSelection() && !selector.isPointInSelection(startPoint)) {
+				System.out.println("Clearing because out of selected");
 				selector.clearSelection();
 			}
 			if (selectionButton.isSelected() && selector.noSelection()) {
-				selector.setStartPoint(curr);
-			} else {
-				startPoint = curr;
+				selector.setStartPoint(startPoint);
+			} else if (!selectionButton.isSelected()){
+				System.out.println("Clearing because not selection");
+				selector.clearSelection();
+				redrawCanvas();
 			}
 		});
 
@@ -172,6 +174,7 @@ public class PaintPane extends BorderPane {
 					if (selectedFigures.isEmpty()) {
 						statusPane.updateStatus("Ninguna figura encontrada");
 						selector.clearSelection();
+						System.out.println("Clearing because no selection");
 					} else {
 						selectedFigures.forEach(label::append);
 						statusPane.updateStatus(label.toString());
@@ -217,28 +220,6 @@ public class PaintPane extends BorderPane {
 				statusPane.updateStatus(eventPoint.toString());
 			}
 		});
-
-//		canvas.setOnMouseClicked(event -> {
-//			if(selectionButton.isSelected()) {
-//				if (selector.isClick() && selector.noSelection()) {
-//					System.out.println("Selected");
-//					selector.selectFigure(new Point(event.getX(), event.getY()));
-//					StringBuilder label = new StringBuilder("Se seleccionó: ");
-//
-//					Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
-//					if (selectedFigures.isEmpty()) {
-//						statusPane.updateStatus("Ninguna figura encontrada");
-//					} else {
-//						DrawableFigure selectedFigure = selectedFigures.iterator().next();
-//						label.append(selectedFigure);
-//						statusPane.updateStatus(label.toString());
-//					}
-//					redrawCanvas();
-//				} else {
-//					selector.clearSelection();
-//				}
-//			}
-//		});
 
 		canvas.setOnMouseDragged(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
@@ -304,22 +285,22 @@ public class PaintPane extends BorderPane {
 			Optional<DrawableFigure> figureFound = canvasState.getFigure(point);
 			figureFound.ifPresent(figure -> {
 				figures.add(figure);
-				Point[] limits = figure.limits();
-				startPoint = limits[0];
-				endPoint = limits[1];
+				Figure.Limits limits = figure.limits();
+				startPoint = limits.getStart();
+				endPoint = limits.getEnd();
 //				System.out.println(String.format("%s %s", startPoint, endPoint));
 			});
 		}
 
 		private boolean isFigureInSelection(Figure figure) {
-			Point[] limits = figure.limits();
+			Figure.Limits limits = figure.limits();
 			if (startPoint == null || endPoint == null) {
 				throw new IllegalStateException("No startPoint or endPoint");
 			}
 
 			return isSelectionValid() &&
-					isPointInSelection(limits[0]) &&
-					isPointInSelection(limits[1]);
+					isPointInSelection(limits.getStart()) &&
+					isPointInSelection(limits.getEnd());
 		}
 
 		public boolean noSelection() {

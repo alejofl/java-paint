@@ -29,7 +29,7 @@ public class Rectangle extends Figure {
     }
 
     @Override
-    public Point[] limits() {
-        return new Point[] {topLeft, bottomRight};
+    public Limits limits() {
+        return new Limits(topLeft, bottomRight);
     }
 }

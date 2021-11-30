@@ -37,7 +37,7 @@ public class DrawableRectangle extends DrawableFigure {
     }
 
     @Override
-    public Point[] limits() {
+    public Limits limits() {
         return figure.limits();
     }
 
