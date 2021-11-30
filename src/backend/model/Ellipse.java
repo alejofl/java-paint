@@ -3,27 +3,21 @@ package backend.model;
 public class Ellipse extends Figure {
 
     private final Rectangle borderRectangle;
-    private Point center;
-    private double xRadius, yRadius;
+    private final double xRadius, yRadius;
 
     public Ellipse(Rectangle borderRectangle){
         this.borderRectangle = borderRectangle;
-        this.getEllipseProperties();
+        this.xRadius = (this.borderRectangle.getBottomRight().getX() - this.borderRectangle.getTopLeft().getX()) / 2;
+        this.yRadius = (this.borderRectangle.getBottomRight().getY() - this.borderRectangle.getTopLeft().getY()) / 2;
     }
 
-    private void getEllipseProperties(){
-        this.xRadius = (this.borderRectangle.getBottomRight().getX() - this.borderRectangle.getTopLeft().getX()) / 2;
-        this.yRadius = (this.borderRectangle.getTopLeft().getY() - this.borderRectangle.getBottomRight().getY()) / 2;
-        this.center = new Point(this.borderRectangle.getTopLeft().getX() + this.xRadius,
+    public Point getCenterPoint(){
+        return new Point(this.borderRectangle.getTopLeft().getX() + this.xRadius,
                 this.borderRectangle.getTopLeft().getY() + this.yRadius);
     }
 
     public Rectangle getBorderRectangle(){
         return this.borderRectangle;
-    }
-
-    protected Point getCenter(){
-        return this.center;
     }
 
     public double getXRadius(){
@@ -36,7 +30,7 @@ public class Ellipse extends Figure {
 
     @Override
     public String toString(){
-        return String.format("Elipse [Centro: %s, X_Radio: %.2f, Y_Radio: %.2f]", this.center,
+        return String.format("Elipse [Centro: %s, X_Radio: %.2f, Y_Radio: %.2f]", this.getCenterPoint(),
                 this.xRadius, this.yRadius);
     }
 
@@ -48,7 +42,7 @@ public class Ellipse extends Figure {
     @Override
     public boolean includesPoint(Point p){
         // Deduccion matemática: https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse#:~:text=The%20region%20(disk)%20bounded%20by,it%20is%20outside%20the%20ellipse.
-        return (Math.pow((p.getX() - this.center.getX()) / this.xRadius, 2) +
-                Math.pow((p.getY() - this.center.getY()) / this.yRadius, 2)) <= 1;
+        return (Math.pow((p.getX() - this.getCenterPoint().getX()) / this.xRadius, 2) +
+                Math.pow((p.getY() - this.getCenterPoint().getY()) / this.yRadius, 2)) <= 1;
     }
 }

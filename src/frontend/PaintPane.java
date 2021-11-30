@@ -2,8 +2,7 @@ package frontend;
 
 import backend.CanvasState;
 //import backend.drawable.DrawableCircle;
-import backend.drawable.DrawableFigure;
-import backend.drawable.DrawableRectangle;
+import backend.drawable.*;
 import backend.model.Figure;
 import backend.model.Point;
 
@@ -176,25 +175,27 @@ public class PaintPane extends BorderPane {
 				if (startPoint == null) {
 					return ;
 				}
-				if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
-					return ;
+				DrawableFigure newFigure = null;
+				if (!(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY())) {
+					if (rectangleButton.isSelected()) {
+						newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+					}
+					else if (circleButton.isSelected()) {
+						double edge = endPoint.getX() - startPoint.getX();
+						newFigure = new DrawableCircle(startPoint, edge, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+					} else if (squareButton.isSelected()) {
+						double edge = endPoint.getX() - startPoint.getX();
+						newFigure = new DrawableSquare(startPoint, edge, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+					} else if (ellipseButton.isSelected()) {
+						newFigure = new DrawableEllipse(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+					}
 				}
 
-				DrawableFigure newFigure = null;
-				if (rectangleButton.isSelected()) {
-					newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+				if (lineButton.isSelected()) {
+					newFigure = new DrawableLine(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
 				}
-				else if (circleButton.isSelected()) {
-					double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-//					newFigure = new DrawableCircle(startPoint, circleRadius, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
-				} else if (squareButton.isSelected()) {
-					// TODO
-				} else if (ellipseButton.isSelected()) {
-					// TODO
-				} else if (lineButton.isSelected()) {
-					// TODO
-				} else {
-					return ;
+				if (newFigure == null){
+					return;
 				}
 				canvasState.addFigure(newFigure);
 			}
@@ -270,7 +271,6 @@ public class PaintPane extends BorderPane {
 		private Point startPoint;
 		private Point endPoint;
 		
-		// TODO: SHOULD BE HASHSET FOR O(1) includes, used in selectedFigures for draw
 		private final Set<DrawableFigure> figures = new TreeSet<>();
 
 		public void setStartPoint(Point startPoint) {

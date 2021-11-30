@@ -24,6 +24,7 @@ public class DrawableEllipse extends DrawableFigure {
         double height = this.figure.getYRadius() * 2;
         gc.fillOval(this.figure.getBorderRectangle().getTopLeft().getX(), this.figure.getBorderRectangle().getTopLeft().getY(),
                 width, height);
+
     }
 
     public void drawStroke(GraphicsContext gc){
