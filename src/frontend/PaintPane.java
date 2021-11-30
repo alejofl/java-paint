@@ -53,6 +53,9 @@ public class PaintPane extends BorderPane {
 	// StatusBar
 	private StatusPane statusPane;
 
+	// dragging variable for more consistent element dragging
+	boolean dragging = false;
+
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
@@ -100,7 +103,9 @@ public class PaintPane extends BorderPane {
 				noSelectionAlert();
 				return;
 			}
-			// TODO
+			selector.getSelectedFigures().forEach(canvasState::remove);
+			selector.clearSelection();
+			redrawCanvas();
 		});
 
 		sendToBackButton.setOnAction(event -> {
@@ -110,6 +115,7 @@ public class PaintPane extends BorderPane {
 			}
 
 			selector.getSelectedFigures().forEach(canvasState::sendToBack);
+			selector.clearSelection();
 			redrawCanvas();
 		});
 
@@ -119,6 +125,7 @@ public class PaintPane extends BorderPane {
 				return;
 			}
 			selector.getSelectedFigures().forEach(canvasState::bringToFront);
+			selector.clearSelection();
 			redrawCanvas();
 		});
 
@@ -149,14 +156,14 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMousePressed(event -> {
 			startPoint = new Point(event.getX(), event.getY());
 
-			if (!selector.noSelection() && !selector.isPointInSelection(startPoint)) {
-				System.out.println("Clearing because out of selected");
-				selector.clearSelection();
-			}
-			if (selectionButton.isSelected() && selector.noSelection()) {
-				selector.setStartPoint(startPoint);
+			if (selectionButton.isSelected()) {
+				if (!selector.noSelection() && selector.isPointInSelection(startPoint)) {
+					dragging = true;
+				} else {
+					selector.clearSelection();
+					selector.setStartPoint(startPoint);
+				}
 			} else if (!selectionButton.isSelected()){
-				System.out.println("Clearing because not selection");
 				selector.clearSelection();
 				redrawCanvas();
 			}
@@ -174,7 +181,6 @@ public class PaintPane extends BorderPane {
 					if (selectedFigures.isEmpty()) {
 						statusPane.updateStatus("Ninguna figura encontrada");
 						selector.clearSelection();
-						System.out.println("Clearing because no selection");
 					} else {
 						selectedFigures.forEach(label::append);
 						statusPane.updateStatus(label.toString());
@@ -206,7 +212,10 @@ public class PaintPane extends BorderPane {
 				}
 				canvasState.addFigure(newFigure);
 			}
-
+			if (dragging) {
+				dragging = false;
+				selector.clearSelection();
+			}
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -223,7 +232,7 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseDragged(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
-			if(selectionButton.isSelected() && !selector.noSelection() && selector.isPointInSelection(eventPoint)) {
+			if (dragging) {
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
 				selector.moveSelection(diffX, diffY);
@@ -288,7 +297,6 @@ public class PaintPane extends BorderPane {
 				Figure.Limits limits = figure.limits();
 				startPoint = limits.getStart();
 				endPoint = limits.getEnd();
-//				System.out.println(String.format("%s %s", startPoint, endPoint));
 			});
 		}
 
