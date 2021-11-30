@@ -9,6 +9,14 @@ public class Line extends Figure {
         this.p2 = p2;
     }
 
+    public Point getP1() {
+        return p1;
+    }
+
+    public Point getP2() {
+        return p2;
+    }
+
     private double distanceBetweenPoints(Point p1, Point p2){
         return Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
     }

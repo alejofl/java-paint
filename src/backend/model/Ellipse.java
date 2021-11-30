@@ -18,12 +18,20 @@ public class Ellipse extends Figure {
                 this.borderRectangle.getTopLeft().getY() + this.yRadius);
     }
 
+    public Rectangle getBorderRectangle(){
+        return this.borderRectangle;
+    }
+
     protected Point getCenter(){
         return this.center;
     }
 
-    protected double getXRadius(){
+    public double getXRadius(){
         return this.xRadius;
+    }
+
+    public double getYRadius() {
+        return this.yRadius;
     }
 
     @Override
