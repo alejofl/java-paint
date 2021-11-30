@@ -14,10 +14,13 @@ public class DrawableRectangle extends DrawableFigure {
     }
 
     @Override
-    public void draw(GraphicsContext gc, boolean selected) {
-        super.draw(gc, selected);
+    public void drawFill(GraphicsContext gc) {
         gc.fillRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
                 Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
+    }
+
+    @Override
+    public void drawStroke(GraphicsContext gc) {
         gc.strokeRect(figure.getTopLeft().getX(), figure.getTopLeft().getY(),
                 Math.abs(figure.getTopLeft().getX() - figure.getBottomRight().getX()), Math.abs(figure.getTopLeft().getY() - figure.getBottomRight().getY()));
     }

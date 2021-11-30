@@ -42,7 +42,15 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
         }
         gc.setFill(fillColor);
         gc.setLineWidth(lineWidth);
+        drawFill(gc);
+        if (lineWidth != 0) {
+            drawStroke(gc);
+        }
     }
+
+    public abstract void drawFill(GraphicsContext gc);
+
+    public abstract void drawStroke(GraphicsContext gc);
 
     public abstract void move(double diffX, double diffY);
 
