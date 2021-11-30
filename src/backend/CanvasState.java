@@ -21,6 +21,10 @@ public class CanvasState {
         return higherZIndex++;
     }
 
+    private int getLowerZIndex() {
+        return --lowerZIndex;
+    }
+
     public Iterable<DrawableFigure> figures() {
         return new TreeSet<>(list);
     }
@@ -32,5 +36,17 @@ public class CanvasState {
             }
         }
         return Optional.empty();
+    }
+
+    public void bringToFront(DrawableFigure figure) {
+        list.remove(figure);
+        figure.setzIndex(getHigherZIndex());
+        addFigure(figure);
+    }
+
+    public void sendToBack(DrawableFigure figure) {
+        list.remove(figure);
+        figure.setzIndex(getLowerZIndex());
+        addFigure(figure);
     }
 }

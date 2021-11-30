@@ -105,7 +105,8 @@ public class PaintPane extends BorderPane {
 				noSelectionAlert();
 				return;
 			}
-			// TODO
+			canvasState.sendToBack(selectedFigure);
+			redrawCanvas();
 		});
 
 		bringToFrontButton.setOnAction(event -> {
@@ -113,7 +114,8 @@ public class PaintPane extends BorderPane {
 				noSelectionAlert();
 				return;
 			}
-			// TODO
+			canvasState.bringToFront(selectedFigure);
+			redrawCanvas();
 		});
 
 		lineColorPicker.setOnAction(event -> {
