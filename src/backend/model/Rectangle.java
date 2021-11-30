@@ -2,7 +2,9 @@ package backend.model;
 
 public class Rectangle extends Figure {
 
+    private final static String RECTANGLE = "Rectángulo";
     private final Point topLeft, bottomRight;
+    protected String figureName = RECTANGLE;
 
     public Rectangle(Point topLeft, Point bottomRight) {
         this.topLeft = topLeft;
@@ -19,7 +21,7 @@ public class Rectangle extends Figure {
 
     @Override
     public String toString() {
-        return String.format("Rectángulo [ %s , %s ]", topLeft, bottomRight);
+        return String.format("%s [ %s , %s ]", figureName, topLeft, bottomRight);
     }
 
     @Override
