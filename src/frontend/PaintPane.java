@@ -4,6 +4,7 @@ import backend.CanvasState;
 import backend.drawable.DrawableCircle;
 import backend.drawable.DrawableFigure;
 import backend.drawable.DrawableRectangle;
+import backend.model.Figure;
 import backend.model.Point;
 
 import javafx.geometry.Insets;
@@ -17,7 +18,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class PaintPane extends BorderPane {
 
@@ -32,21 +36,19 @@ public class PaintPane extends BorderPane {
 	private double lineWidth = 1;
 
 	// Botones Barra Izquierda
-	private ToggleButton selectionButton = new ToggleButton("Seleccionar", createButtonGraphic("select"));
-	private ToggleButton rectangleButton = new ToggleButton("Rectángulo", createButtonGraphic("rectangle"));
-	private ToggleButton circleButton = new ToggleButton("Círculo", createButtonGraphic("circle"));
-	private ToggleButton squareButton = new ToggleButton("Cuadrado", createButtonGraphic("square"));
-	private ToggleButton ellipseButton = new ToggleButton("Elípse", createButtonGraphic("ellipse"));
-	private ToggleButton lineButton = new ToggleButton("Línea", createButtonGraphic("line"));
+	private final ToggleButton selectionButton = new ToggleButton("Seleccionar", createButtonGraphic("select"));
+	private final ToggleButton rectangleButton = new ToggleButton("Rectángulo", createButtonGraphic("rectangle"));
+	private final ToggleButton circleButton = new ToggleButton("Círculo", createButtonGraphic("circle"));
+	private final ToggleButton squareButton = new ToggleButton("Cuadrado", createButtonGraphic("square"));
+	private final ToggleButton ellipseButton = new ToggleButton("Elípse", createButtonGraphic("ellipse"));
+	private final ToggleButton lineButton = new ToggleButton("Línea", createButtonGraphic("line"));
 	private Button deleteButton = new Button("Borrar", createButtonGraphic("delete"));
 	private Button sendToBackButton = new Button("Al Fondo", createButtonGraphic("send-to-back"));
 	private Button bringToFrontButton = new Button("Al Frente", createButtonGraphic("bring-to-front"));
 
-	// Dibujar una figura
-	private Point startPoint;
+	private SelectionHandler selector = new SelectionHandler();
 
-	// Seleccionar una figura
-	private DrawableFigure selectedFigure;
+	private Point startPoint;
 
 	// StatusBar
 	private StatusPane statusPane;
@@ -55,6 +57,7 @@ public class PaintPane extends BorderPane {
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		ToggleButton[] togglesArr = {selectionButton, squareButton, rectangleButton, circleButton, ellipseButton, lineButton};
+		selectionButton.setSelected(true);
 		Button[] buttonsArr = {deleteButton, bringToFrontButton, sendToBackButton};
 		ToggleGroup tools = new ToggleGroup();
 		for (ToggleButton tool : togglesArr) {
@@ -93,7 +96,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(fillColorPicker);
 
 		deleteButton.setOnAction(event -> {
-			if (selectedFigure == null) {
+			if (selector.noSelection()) {
 				noSelectionAlert();
 				return;
 			}
@@ -101,76 +104,106 @@ public class PaintPane extends BorderPane {
 		});
 
 		sendToBackButton.setOnAction(event -> {
-			if (selectedFigure == null) {
+			System.out.println(selector.getSelectedFigures());
+			if (selector.noSelection()) {
 				noSelectionAlert();
 				return;
 			}
-			canvasState.sendToBack(selectedFigure);
+
+			selector.getSelectedFigures().forEach(canvasState::sendToBack);
 			redrawCanvas();
 		});
 
 		bringToFrontButton.setOnAction(event -> {
-			if (selectedFigure == null) {
+			if (selector.noSelection()) {
 				noSelectionAlert();
 				return;
 			}
-			canvasState.bringToFront(selectedFigure);
+			selector.getSelectedFigures().forEach(canvasState::bringToFront);
 			redrawCanvas();
 		});
 
 		lineColorPicker.setOnAction(event -> {
 			lineColor = lineColorPicker.getValue();
-			if (selectedFigure != null) {
-				selectedFigure.setStrokeColor(lineColor);
-				redrawCanvas();
-			}
+			selector.getSelectedFigures().forEach(figure -> {
+				figure.setStrokeColor(lineColor);
+			});
+			redrawCanvas();
 		});
 
 		fillColorPicker.setOnAction(event -> {
 			fillColor = fillColorPicker.getValue();
-			if (selectedFigure != null) {
-				selectedFigure.setFillColor(fillColor);
-				redrawCanvas();
-			}
+			selector.getSelectedFigures().forEach(figure -> {
+				figure.setFillColor(fillColor);
+			});
+			redrawCanvas();
 		});
 
 		borderSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lineWidth = (double) newValue;
-			if (selectedFigure != null) {
-				selectedFigure.setLineWidth(lineWidth);
-				redrawCanvas();
-			}
+			selector.getSelectedFigures().forEach(figure -> {
+				figure.setLineWidth(lineWidth);
+			});
+			redrawCanvas();
 		});
 
 		canvas.setOnMousePressed(event -> {
-			startPoint = new Point(event.getX(), event.getY());
+			Point curr = new Point(event.getX(), event.getY());
+
+			if (!selector.noSelection() && !selector.isPointInSelection(curr)) {
+				selector.clearSelection();
+			}
+			if (selectionButton.isSelected() && selector.noSelection()) {
+				selector.setStartPoint(curr);
+			} else {
+				startPoint = curr;
+			}
 		});
 
 		canvas.setOnMouseReleased(event -> {
 			Point endPoint = new Point(event.getX(), event.getY());
-			if (startPoint == null) {
-				return ;
+
+			if (selectionButton.isSelected()) {
+				selector.setEndPoint(endPoint);
+				if (selector.noSelection()) {
+					StringBuilder label = new StringBuilder("Se seleccionó: ");
+					Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
+
+					if (selectedFigures.isEmpty()) {
+						statusPane.updateStatus("Ninguna figura encontrada");
+						selector.clearSelection();
+					} else {
+						selectedFigures.forEach(label::append);
+						statusPane.updateStatus(label.toString());
+					}
+				}
+			} else if (!selectionButton.isSelected()) {
+				if (startPoint == null) {
+					return ;
+				}
+				if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
+					return ;
+				}
+
+				DrawableFigure newFigure = null;
+				if (rectangleButton.isSelected()) {
+					newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+				}
+				else if (circleButton.isSelected()) {
+					double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
+					newFigure = new DrawableCircle(startPoint, circleRadius, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+				} else if (squareButton.isSelected()) {
+					// TODO
+				} else if (ellipseButton.isSelected()) {
+					// TODO
+				} else if (lineButton.isSelected()) {
+					// TODO
+				} else {
+					return ;
+				}
+				canvasState.addFigure(newFigure);
 			}
-			if (endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY()) {
-				return ;
-			}
-			DrawableFigure newFigure = null;
-			if (rectangleButton.isSelected()) {
-				newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
-			}
-			else if (circleButton.isSelected()) {
-				double circleRadius = Math.abs(endPoint.getX() - startPoint.getX());
-				newFigure = new DrawableCircle(startPoint, circleRadius, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
-			} else if (squareButton.isSelected()) {
-				// TODO
-			} else if (ellipseButton.isSelected()) {
-				// TODO
-			} else if (lineButton.isSelected()) {
-				// TODO
-			} else {
-				return ;
-			}
-			canvasState.addFigure(newFigure);
+
 			startPoint = null;
 			redrawCanvas();
 		});
@@ -185,31 +218,34 @@ public class PaintPane extends BorderPane {
 			}
 		});
 
-		canvas.setOnMouseClicked(event -> {
-			if(selectionButton.isSelected()) {
-				Point eventPoint = new Point(event.getX(), event.getY());
-				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
-				if (figureFound.isPresent()) {
-					selectedFigure = figureFound.get();
-					label.append(selectedFigure);
-					statusPane.updateStatus(label.toString());
-				} else {
-					selectedFigure = null;
-					statusPane.updateStatus("Ninguna figura encontrada");
-				}
-				redrawCanvas();
-			}
-		});
+//		canvas.setOnMouseClicked(event -> {
+//			if(selectionButton.isSelected()) {
+//				if (selector.isClick() && selector.noSelection()) {
+//					System.out.println("Selected");
+//					selector.selectFigure(new Point(event.getX(), event.getY()));
+//					StringBuilder label = new StringBuilder("Se seleccionó: ");
+//
+//					Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
+//					if (selectedFigures.isEmpty()) {
+//						statusPane.updateStatus("Ninguna figura encontrada");
+//					} else {
+//						DrawableFigure selectedFigure = selectedFigures.iterator().next();
+//						label.append(selectedFigure);
+//						statusPane.updateStatus(label.toString());
+//					}
+//					redrawCanvas();
+//				} else {
+//					selector.clearSelection();
+//				}
+//			}
+//		});
 
 		canvas.setOnMouseDragged(event -> {
-			if(selectionButton.isSelected()) {
-				Point eventPoint = new Point(event.getX(), event.getY());
+			Point eventPoint = new Point(event.getX(), event.getY());
+			if(selectionButton.isSelected() && !selector.noSelection() && selector.isPointInSelection(eventPoint)) {
 				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
 				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
-				if (selectedFigure != null) {
-					selectedFigure.move(diffX, diffY);
-				}
+				selector.moveSelection(diffX, diffY);
 				redrawCanvas();
 			}
 		});
@@ -219,8 +255,10 @@ public class PaintPane extends BorderPane {
 
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+		Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
 		for (DrawableFigure figure : canvasState.figures()) {
-			figure.draw(gc, figure == selectedFigure);
+			figure.draw(gc, selectedFigures.contains(figure));
 		}
 	}
 
@@ -235,5 +273,92 @@ public class PaintPane extends BorderPane {
 		alert.setHeaderText("No se puede realizar la acción");
 		alert.setContentText("No hay una figura seleccionada.");
 		alert.showAndWait();
+	}
+
+	private class SelectionHandler {
+		private Point startPoint;
+		private Point endPoint;
+		
+		// TODO: SHOULD BE HASHSET FOR O(1) includes, used in selectedFigures for draw
+		private final Set<DrawableFigure> figures = new TreeSet<>();
+
+		public void setStartPoint(Point startPoint) {
+			this.startPoint = startPoint;
+		}
+
+		public void setEndPoint(Point endPoint) {
+			this.endPoint = endPoint;
+
+			if (isClick()) {
+				selectFigure(endPoint);
+			} else {
+				canvasState.figures().forEach(figure -> {
+					if (isFigureInSelection(figure)) {
+						figures.add(figure);
+					}
+				});
+			}
+		}
+
+		private void selectFigure(Point point) {
+			Optional<DrawableFigure> figureFound = canvasState.getFigure(point);
+			figureFound.ifPresent(figure -> {
+				figures.add(figure);
+				Point[] limits = figure.limits();
+				startPoint = limits[0];
+				endPoint = limits[1];
+//				System.out.println(String.format("%s %s", startPoint, endPoint));
+			});
+		}
+
+		private boolean isFigureInSelection(Figure figure) {
+			Point[] limits = figure.limits();
+			if (startPoint == null || endPoint == null) {
+				throw new IllegalStateException("No startPoint or endPoint");
+			}
+
+			return isSelectionValid() &&
+					isPointInSelection(limits[0]) &&
+					isPointInSelection(limits[1]);
+		}
+
+		public boolean noSelection() {
+			return figures.isEmpty();
+//			return (startPoint == null || endPoint == null) && figures.isEmpty();
+		}
+
+		public boolean isClick() {
+			return startPoint != null && startPoint.equals(endPoint);
+		}
+
+		public void clearSelection() {
+			startPoint = null;
+			endPoint = null;
+			figures.clear();
+		}
+
+		public void moveSelection(double diffX, double diffY) {
+			if (startPoint != null && endPoint != null) {
+				startPoint.move(diffX, diffY);
+				endPoint.move(diffX, diffY);
+
+				getSelectedFigures().forEach(figure -> figure.move(diffX, diffY));
+			}
+		}
+
+		public boolean isPointInSelection(Point point) {
+			return (startPoint != null && endPoint != null) && startPoint.getX() < point.getX() &&
+					startPoint.getY() < point.getY() &&
+					point.getX() < endPoint.getX() &&
+					point.getY() < endPoint.getY();
+		}
+
+		private boolean isSelectionValid() {
+			return startPoint.getX() < endPoint.getX() && startPoint.getY() < endPoint.getY();
+		}
+
+		private Set<DrawableFigure> getSelectedFigures() {
+			return figures;
+		}
 	}
 }

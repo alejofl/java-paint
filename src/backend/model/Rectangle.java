@@ -27,4 +27,9 @@ public class Rectangle extends Figure {
         return p.getX() > this.getTopLeft().getX() && p.getX() < this.getBottomRight().getX() &&
                 p.getY() > this.getTopLeft().getY() && p.getY() < this.getBottomRight().getY();
     }
+
+    @Override
+    public Point[] limits() {
+        return new Point[] {topLeft, bottomRight};
+    }
 }

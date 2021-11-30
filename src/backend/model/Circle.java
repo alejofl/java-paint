@@ -29,4 +29,11 @@ public class Circle extends Figure {
                 Math.pow(this.getCenterPoint().getY() - p.getY(), 2)) < this.getRadius();
     }
 
+    @Override
+    public Point[] limits() {
+        return new Point[]{
+                new Point(getCenterPoint().getX() - radius, getCenterPoint().getY() - radius),
+                new Point(getCenterPoint().getX() + radius, getCenterPoint().getY() + radius)
+        };
+    }
 }

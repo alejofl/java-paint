@@ -36,6 +36,11 @@ public class DrawableCircle extends DrawableFigure {
     }
 
     @Override
+    public Point[] limits() {
+        return figure.limits();
+    }
+
+    @Override
     public String toString(){
         return this.figure.toString();
     }
