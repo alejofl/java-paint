@@ -26,14 +26,16 @@ import java.util.TreeSet;
 public class PaintPane extends BorderPane {
 
 	// BackEnd
-	private CanvasState canvasState;
+	private final CanvasState canvasState;
 
-	// Canvas y relacionados
-	private Canvas canvas = new Canvas(800, 600);
-	private GraphicsContext gc = canvas.getGraphicsContext2D();
-	private Color lineColor = Color.BLACK;
-	private Color fillColor = Color.YELLOW;
-	private double lineWidth = 1;
+	private static final Color DEFAULT_LINE_COLOR = Color.BLACK;
+	private static final Color DEFAULT_FILL_COLOR = Color.YELLOW;
+	private static final double DEFAULT_LINE_WIDTH = 1;
+	private final Canvas canvas = new Canvas(800, 600);
+	private final GraphicsContext gc = canvas.getGraphicsContext2D();
+	private Color lineColor = DEFAULT_LINE_COLOR;
+	private Color fillColor = DEFAULT_FILL_COLOR;
+	private double lineWidth = DEFAULT_LINE_WIDTH;
 
 	// Botones Barra Izquierda
 	private final ToggleButton selectionButton = new ToggleButton("Seleccionar", createButtonGraphic("select"));
@@ -42,19 +44,19 @@ public class PaintPane extends BorderPane {
 	private final ToggleButton squareButton = new ToggleButton("Cuadrado", createButtonGraphic("square"));
 	private final ToggleButton ellipseButton = new ToggleButton("Elípse", createButtonGraphic("ellipse"));
 	private final ToggleButton lineButton = new ToggleButton("Línea", createButtonGraphic("line"));
-	private Button deleteButton = new Button("Borrar", createButtonGraphic("delete"));
-	private Button sendToBackButton = new Button("Al Fondo", createButtonGraphic("send-to-back"));
-	private Button bringToFrontButton = new Button("Al Frente", createButtonGraphic("bring-to-front"));
+	private final Button deleteButton = new Button("Borrar", createButtonGraphic("delete"));
+	private final Button sendToBackButton = new Button("Al Fondo", createButtonGraphic("send-to-back"));
+	private final Button bringToFrontButton = new Button("Al Frente", createButtonGraphic("bring-to-front"));
 
-	private SelectionHandler selector = new SelectionHandler();
+	private final SelectionHandler selector = new SelectionHandler();
 
 	private Point startPoint;
 
 	// StatusBar
-	private StatusPane statusPane;
+	private final StatusPane statusPane;
 
 	// dragging variable for more consistent element dragging
-	boolean dragging = false;
+	private boolean dragging = false;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
 		this.canvasState = canvasState;
@@ -67,10 +69,12 @@ public class PaintPane extends BorderPane {
 			tool.setMinWidth(120);
 			tool.setToggleGroup(tools);
 			tool.setCursor(Cursor.HAND);
+			tool.setOnAction(event -> clearSelectionAndRedraw());
 		}
 		for (Button tool : buttonsArr) {
 			tool.setMinWidth(120);
 			tool.setCursor(Cursor.HAND);
+			tool.setOnAction(event -> clearSelectionAndRedraw());
 		}
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.setPadding(new Insets(5));
@@ -131,25 +135,19 @@ public class PaintPane extends BorderPane {
 
 		lineColorPicker.setOnAction(event -> {
 			lineColor = lineColorPicker.getValue();
-			selector.getSelectedFigures().forEach(figure -> {
-				figure.setStrokeColor(lineColor);
-			});
+			selector.getSelectedFigures().forEach(figure -> figure.setStrokeColor(lineColor));
 			redrawCanvas();
 		});
 
 		fillColorPicker.setOnAction(event -> {
 			fillColor = fillColorPicker.getValue();
-			selector.getSelectedFigures().forEach(figure -> {
-				figure.setFillColor(fillColor);
-			});
+			selector.getSelectedFigures().forEach(figure -> figure.setFillColor(fillColor));
 			redrawCanvas();
 		});
 
 		borderSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lineWidth = (double) newValue;
-			selector.getSelectedFigures().forEach(figure -> {
-				figure.setLineWidth(lineWidth);
-			});
+			selector.getSelectedFigures().forEach(figure -> figure.setLineWidth(lineWidth));
 			redrawCanvas();
 		});
 
@@ -163,9 +161,6 @@ public class PaintPane extends BorderPane {
 					selector.clearSelection();
 					selector.setStartPoint(startPoint);
 				}
-			} else if (!selectionButton.isSelected()){
-				selector.clearSelection();
-				redrawCanvas();
 			}
 		});
 
@@ -174,17 +169,14 @@ public class PaintPane extends BorderPane {
 
 			if (selectionButton.isSelected()) {
 				selector.setEndPoint(endPoint);
-				if (selector.noSelection()) {
-					StringBuilder label = new StringBuilder("Se seleccionó: ");
-					Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
-
-					if (selectedFigures.isEmpty()) {
-						statusPane.updateStatus("Ninguna figura encontrada");
-						selector.clearSelection();
-					} else {
-						selectedFigures.forEach(label::append);
-						statusPane.updateStatus(label.toString());
-					}
+				StringBuilder label = new StringBuilder("Se seleccionó: ");
+				Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
+				if (selectedFigures.isEmpty()) {
+					statusPane.updateStatus("Ninguna figura encontrada");
+					selector.clearSelection();
+				} else {
+					selectedFigures.forEach(label::append);
+					statusPane.updateStatus(label.toString());
 				}
 			} else if (!selectionButton.isSelected()) {
 				if (startPoint == null) {
@@ -265,6 +257,11 @@ public class PaintPane extends BorderPane {
 		alert.showAndWait();
 	}
 
+	private void clearSelectionAndRedraw() {
+		selector.clearSelection();
+		redrawCanvas();
+	}
+
 	private class SelectionHandler {
 		private Point startPoint;
 		private Point endPoint;
@@ -313,7 +310,6 @@ public class PaintPane extends BorderPane {
 
 		public boolean noSelection() {
 			return figures.isEmpty();
-//			return (startPoint == null || endPoint == null) && figures.isEmpty();
 		}
 
 		public boolean isClick() {
@@ -330,7 +326,6 @@ public class PaintPane extends BorderPane {
 			if (startPoint != null && endPoint != null) {
 				startPoint.move(diffX, diffY);
 				endPoint.move(diffX, diffY);
-
 				getSelectedFigures().forEach(figure -> figure.move(diffX, diffY));
 			}
 		}
