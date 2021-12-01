@@ -1,0 +1,79 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Drawable {
+    + {static} SELECTED_COLOR
+
+    + void draw(GraphicsContext gc, boolean selected)
+    + {abstract} DrawConfiguration getDrawConfiguration()
+    + {abstract} void drawFill(GraphicsContext gc)
+    + {abstract} void drawStroke(GraphicsContext gc)
+}
+
+interface Movable {
+    + void move(double diffX, double diffY)
+    + {abstract} Limits getLimits()
+}
+
+class DrawConfiguration {
+    - Color fillColor
+    - Color lineColor
+    - double lineWidth
+
+    + DrawConfiguration(Color fillColor, Color lineColor, double lineWidth)
+    + Color getFillColor()
+    + Color getLineColor()
+    + double getLineWidth()
+    + void setFillColor()
+    + void setLineColor()
+    + void setLineWidth()
+}
+
+package backend.model {
+    class Ellipse
+    class Rectangle
+    class Line
+}
+
+class DrawableRectangle extends Rectangle implements Drawable, Movable {
+    - DrawConfiguration config
+
+    + DrawableRectangle(Point topLeft, Point bottomRight, int zIndex, Color strokeColor, Color fillColor, double lineWidth)
+    + DrawableRectangle(Rectangle figure, Color strokeColor, Color fillColor, double lineWidth)
+    + void drawFill(GraphicsContext gc)
+    + void drawStroke(GraphicsContext gc)
+    + DrawConfiguration getDrawConfiguration()
+}
+
+class DrawableEllipse extends Ellipse implements Drawable, Movable {
+    - DrawConfiguration config
+
+    + DrawableEllipse(Point topLeft, Point bottomRight, int zIndex, Color strokeColor, Color fillColor, double lineWidth)
+    + DrawableEllipse(Ellipse figure, Color strokeColor, Color fillColor, double lineWidth)
+    + void drawFill(GraphicsContext gc)
+    + void drawStroke(GraphicsContext gc)
+    + DrawConfiguration getDrawConfiguration()
+}
+
+class DrawableLine extends Line implements Drawable, Movable {
+    - DrawConfiguration config
+
+    + DrawableLine(Point p1, Point p2, int zIndex, Color strokeColor, Color fillColor, double lineWidth)
+    + void drawFill(GraphicsContext gc)
+    + void drawStroke(GraphicsContext gc)
+    + DrawConfiguration getDrawConfiguration()
+}
+
+class DrawableSquare extends DrawableRectangle {
+    + DrawableSquare(Point topLeft, double edge, int zIndex, Color strokeColor, Color fillColor, double lineWidth)
+}
+
+class DrawableCircle extends DrawableEllipse {
+    + DrawableCircle(Point topLeft, double edge, int zIndex, Color strokeColor, Color fillColor, double lineWidth)
+}
+
+DrawConfiguration *-- DrawableRectangle
+DrawConfiguration *-- DrawableEllipse
+DrawConfiguration *-- DrawableLine
+
+@enduml
