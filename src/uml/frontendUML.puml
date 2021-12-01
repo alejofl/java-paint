@@ -1,0 +1,104 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package drawable {
+}
+
+package javafx {
+    package application {
+        abstract class Application
+    }
+    package scene {
+        package control {
+            class MenuBar
+        }
+        package layout {
+            class VBox
+            class BorderPane
+        }
+    }
+}
+
+class AppLauncher extends Application {
+    + {static} void main(String[] args)
+    + void start(Stage primaryStage)
+}
+
+class AppMenuBar extends MenuBar {
+    + AppMenuBar()
+}
+
+class MainFrame extends VBox {
+    - PaintPane paintPane
+
+    + MainFrame(CanvasState canvasState)
+    # void deleteFigure()
+}
+
+class StatusPane extends BorderPane {
+    - Label statusLabel
+
+    + StatusPane()
+    + void updateStatus(String text)
+}
+
+package backend {
+    class CanvasState
+}
+
+class PaintPane extends BorderPane {
+    - CanvasState canvasState
+    - {static} Color DEFAULT_LINE_COLOR
+    - {static} Color DEFAULT_FILL_COLOR
+    - {static} double DEFAULT_LINE_WIDTH
+    - Canvas canvas
+    - GraphicsContext gc
+    - Color lineColor
+    - Color fillColor
+    - double lineWidth
+    - ToggleButton selectionButton
+    - ToggleButton rectangleButton
+    - ToggleButton circleButton
+    - ToggleButton squareButton
+    - ToggleButton ellipseButton
+    - ToggleButton lineButton
+    - Button deleteButton
+    - Button sendToBackButton
+    - Button bringToFrontButton
+    - SelectionHandler selector
+    - Point startPoint
+    - StatusPane statusPane
+    - boolean dragging
+
+    + PaintPane(CanvasState canvasState, StatusPane statusPane)
+    - void redrawCanvas()
+    - ImageView createButtonGraphic(String imageName)
+    - void noSelectionAlert()
+    - void clearSelectionAndRedraw()
+    # void deleteFigure
+}
+
+class SelectionHandler {
+    - Point startPoint
+    - Point endPoint
+    - TreeSet<Figure> figures
+
+    + void setStartPoint(Point startPoint)
+    + void setEndPoint(Point endPoint)
+    - void selectFigure(Point point)
+    - boolean isFigureInSelection(Figure figure)
+    + boolean noSelection()
+    + boolean isClick()
+    + void clearSelection()
+    + void moveSelection(double diffX, double diffY)
+    + boolean isPointInSelection(Point point)
+    - boolean isSelectionValid()
+    - TreeSet<Figure> getSelectedFigures()
+}
+
+CanvasState *-- PaintPane
+StatusPane *-- PaintPane
+PaintPane +-- SelectionHandler
+javafx *-- PaintPane
+
+@enduml
