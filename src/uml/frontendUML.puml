@@ -85,15 +85,15 @@ class SelectionHandler {
 
     + void setStartPoint(Point startPoint)
     + void setEndPoint(Point endPoint)
-    - void selectFigure(Point point)
-    - boolean isFigureInSelection(Figure figure)
     + boolean noSelection()
-    + boolean isClick()
     + void clearSelection()
     + void moveSelection(double diffX, double diffY)
     + boolean isPointInSelection(Point point)
+    + TreeSet<Figure> getSelectedFigures()
     - boolean isSelectionValid()
-    - TreeSet<Figure> getSelectedFigures()
+    - void selectFigure(Point point)
+    - boolean isFigureInSelection(Figure figure)
+    - boolean isClick()
 }
 
 CanvasState *-- PaintPane

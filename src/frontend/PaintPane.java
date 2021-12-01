@@ -281,33 +281,8 @@ public class PaintPane extends BorderPane {
 			}
 		}
 
-		private void selectFigure(Point point) {
-			Optional<Figure> figureFound = canvasState.getFigure(point);
-			figureFound.ifPresent(figure -> {
-				figures.add(figure);
-				Limits limits = figure.getLimits();
-				startPoint = limits.getStart();
-				endPoint = limits.getEnd();
-			});
-		}
-
-		private boolean isFigureInSelection(Figure figure) {
-			Limits limits = figure.getLimits();
-			if (startPoint == null || endPoint == null) {
-				throw new IllegalStateException("No startPoint or endPoint");
-			}
-
-			return isSelectionValid() &&
-					isPointInSelection(limits.getStart()) &&
-					isPointInSelection(limits.getEnd());
-		}
-
 		public boolean noSelection() {
 			return figures.isEmpty();
-		}
-
-		public boolean isClick() {
-			return startPoint != null && startPoint.equals(endPoint);
 		}
 
 		public void clearSelection() {
@@ -329,12 +304,37 @@ public class PaintPane extends BorderPane {
 					point.getY() < endPoint.getY();
 		}
 
+		public TreeSet<Figure> getSelectedFigures() {
+			return figures;
+		}
+
 		private boolean isSelectionValid() {
 			return startPoint.getX() < endPoint.getX() && startPoint.getY() < endPoint.getY();
 		}
 
-		private TreeSet<Figure> getSelectedFigures() {
-			return figures;
+		private boolean isClick() {
+			return startPoint != null && startPoint.equals(endPoint);
+		}
+
+		private void selectFigure(Point point) {
+			Optional<Figure> figureFound = canvasState.getFigure(point);
+			figureFound.ifPresent(figure -> {
+				figures.add(figure);
+				Limits limits = figure.getLimits();
+				startPoint = limits.getStart();
+				endPoint = limits.getEnd();
+			});
+		}
+
+		private boolean isFigureInSelection(Figure figure) {
+			Limits limits = figure.getLimits();
+			if (startPoint == null || endPoint == null) {
+				throw new IllegalStateException("No startPoint or endPoint");
+			}
+
+			return isSelectionValid() &&
+					isPointInSelection(limits.getStart()) &&
+					isPointInSelection(limits.getEnd());
 		}
 	}
 }

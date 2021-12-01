@@ -37,6 +37,10 @@ public class Point {
         return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0;
     }
 
+    public double distanceTo(Point other){
+        return Math.sqrt(Math.pow(other.getX() - getX(), 2) + Math.pow(other.getY() - getY(), 2));
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y);
