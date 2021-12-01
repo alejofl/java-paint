@@ -2,22 +2,19 @@ package backend.model;
 
 public class Ellipse extends Figure {
 
-    private final Rectangle borderRectangle;
+    private String stringInfo;
     private final double xRadius, yRadius;
 
-    public Ellipse(Rectangle borderRectangle){
-        this.borderRectangle = borderRectangle;
-        this.xRadius = (this.borderRectangle.getBottomRight().getX() - this.borderRectangle.getTopLeft().getX()) / 2;
-        this.yRadius = (this.borderRectangle.getBottomRight().getY() - this.borderRectangle.getTopLeft().getY()) / 2;
+    public Ellipse(Limits limits, int zIndex){
+        super(limits, zIndex);
+        this.xRadius = (this.getLimits().getEnd().getX() - this.getLimits().getStart().getX()) / 2;
+        this.yRadius = (this.getLimits().getEnd().getY() - this.getLimits().getStart().getY()) / 2;
+        stringInfo = createStringInfo();
     }
 
     public Point getCenterPoint(){
-        return new Point(this.borderRectangle.getTopLeft().getX() + this.xRadius,
-                this.borderRectangle.getTopLeft().getY() + this.yRadius);
-    }
-
-    public Rectangle getBorderRectangle(){
-        return this.borderRectangle;
+        return new Point(this.getLimits().getStart().getX() + this.xRadius,
+                         this.getLimits().getStart().getY() + this.yRadius);
     }
 
     public double getXRadius(){
@@ -28,15 +25,18 @@ public class Ellipse extends Figure {
         return this.yRadius;
     }
 
-    @Override
-    public String toString(){
+    public String createStringInfo(){
         return String.format("Elipse [Centro: %s, X_Radio: %.2f, Y_Radio: %.2f]", this.getCenterPoint(),
                 this.xRadius, this.yRadius);
     }
 
+    public void setStringInfo(String stringInfo) {
+        this.stringInfo = stringInfo;
+    }
+
     @Override
-    public Limits limits(){
-        return this.borderRectangle.limits();
+    public String toString() {
+        return stringInfo;
     }
 
     @Override

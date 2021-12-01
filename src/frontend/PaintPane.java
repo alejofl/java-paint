@@ -1,8 +1,9 @@
 package frontend;
 
 import backend.CanvasState;
-import backend.drawable.*;
+import frontend.drawable.*;
 import backend.model.Figure;
+import backend.model.Limits;
 import backend.model.Point;
 
 import javafx.geometry.Insets;
@@ -121,19 +122,19 @@ public class PaintPane extends BorderPane {
 
 		lineColorPicker.setOnAction(event -> {
 			lineColor = lineColorPicker.getValue();
-			selector.getSelectedFigures().forEach(figure -> figure.setStrokeColor(lineColor));
+			selector.getSelectedFigures().forEach(figure -> ((Drawable) figure).getDrawConfiguration().setLineColor(lineColor));
 			redrawCanvas();
 		});
 
 		fillColorPicker.setOnAction(event -> {
 			fillColor = fillColorPicker.getValue();
-			selector.getSelectedFigures().forEach(figure -> figure.setFillColor(fillColor));
+			selector.getSelectedFigures().forEach(figure -> ((Drawable) figure).getDrawConfiguration().setFillColor(fillColor));
 			redrawCanvas();
 		});
 
 		borderSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			lineWidth = (double) newValue;
-			selector.getSelectedFigures().forEach(figure -> figure.setLineWidth(lineWidth));
+			selector.getSelectedFigures().forEach(figure -> ((Drawable) figure).getDrawConfiguration().setLineWidth(lineWidth));
 			redrawCanvas();
 		});
 
@@ -160,7 +161,7 @@ public class PaintPane extends BorderPane {
 			if (selectionButton.isSelected()) {
 				selector.setEndPoint(endPoint);
 				StringBuilder label = new StringBuilder("Se seleccionó: ");
-				Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
+				Set<Figure> selectedFigures = selector.getSelectedFigures();
 				if (selectedFigures.isEmpty()) {
 					statusPane.updateStatus("Ninguna figura encontrada");
 					selector.clearSelection();
@@ -169,7 +170,7 @@ public class PaintPane extends BorderPane {
 					statusPane.updateStatus(label.toString());
 				}
 			} else {
-				DrawableFigure newFigure = null;
+				Figure newFigure = null;
 				boolean validEndPoint = !(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY());
 				if (lineButton.isSelected()) {
 					newFigure = new DrawableLine(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
@@ -203,7 +204,7 @@ public class PaintPane extends BorderPane {
 
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
-			Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
+			Optional<Figure> figureFound = canvasState.getFigure(eventPoint);
 			statusPane.updateStatus(figureFound.isPresent() ? figureFound.get().toString() : eventPoint.toString());
 		});
 
@@ -223,14 +224,14 @@ public class PaintPane extends BorderPane {
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-		Set<DrawableFigure> selectedFigures = selector.getSelectedFigures();
-		for (DrawableFigure figure : canvasState.figures()) {
-			figure.draw(gc, selectedFigures.contains(figure));
+		Set<Figure> selectedFigures = selector.getSelectedFigures();
+		for (Figure figure : canvasState.figures()) {
+			((Drawable) figure).draw(gc, selectedFigures.contains(figure));
 		}
 	}
 
 	private ImageView createButtonGraphic(String imageName) {
-		Image img = new Image(getClass().getResourceAsStream("/resources/" + imageName + ".png"));
+		Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/resources/" + imageName + ".png")));
 		return new ImageView(img);
 	}
 
@@ -260,7 +261,7 @@ public class PaintPane extends BorderPane {
 		private Point startPoint;
 		private Point endPoint;
 		
-		private final TreeSet<DrawableFigure> figures = new TreeSet<>();
+		private final TreeSet<Figure> figures = new TreeSet<>();
 
 		public void setStartPoint(Point startPoint) {
 			this.startPoint = startPoint;
@@ -281,17 +282,17 @@ public class PaintPane extends BorderPane {
 		}
 
 		private void selectFigure(Point point) {
-			Optional<DrawableFigure> figureFound = canvasState.getFigure(point);
+			Optional<Figure> figureFound = canvasState.getFigure(point);
 			figureFound.ifPresent(figure -> {
 				figures.add(figure);
-				Figure.Limits limits = figure.limits();
+				Limits limits = figure.getLimits();
 				startPoint = limits.getStart();
 				endPoint = limits.getEnd();
 			});
 		}
 
 		private boolean isFigureInSelection(Figure figure) {
-			Figure.Limits limits = figure.limits();
+			Limits limits = figure.getLimits();
 			if (startPoint == null || endPoint == null) {
 				throw new IllegalStateException("No startPoint or endPoint");
 			}
@@ -317,7 +318,7 @@ public class PaintPane extends BorderPane {
 
 		public void moveSelection(double diffX, double diffY) {
 			if (startPoint != null && endPoint != null) {
-				getSelectedFigures().forEach(figure -> figure.move(diffX, diffY));
+				getSelectedFigures().forEach(figure -> ((Movable) figure).move(diffX, diffY));
 			}
 		}
 
@@ -332,7 +333,7 @@ public class PaintPane extends BorderPane {
 			return startPoint.getX() < endPoint.getX() && startPoint.getY() < endPoint.getY();
 		}
 
-		private TreeSet<DrawableFigure> getSelectedFigures() {
+		private TreeSet<Figure> getSelectedFigures() {
 			return figures;
 		}
 	}

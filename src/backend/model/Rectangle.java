@@ -3,35 +3,29 @@ package backend.model;
 public class Rectangle extends Figure {
 
     private final static String RECTANGLE = "Rectángulo";
-    private final Point topLeft, bottomRight;
-    protected String figureName = RECTANGLE;
+    private String figureName;
 
-    public Rectangle(Point topLeft, Point bottomRight) {
-        this.topLeft = topLeft;
-        this.bottomRight = bottomRight;
-    }
-
-    public Point getTopLeft() {
-        return topLeft;
-    }
-
-    public Point getBottomRight() {
-        return bottomRight;
+    public Rectangle(Limits limits, int zIndex) {
+        super(limits, zIndex);
+        setFigureName(RECTANGLE);
     }
 
     @Override
     public String toString() {
-        return String.format("%s [ %s , %s ]", figureName, topLeft, bottomRight);
+        return String.format("%s [ %s , %s ]", figureName, getLimits().getStart(), getLimits().getEnd());
+    }
+
+    public void setFigureName(String name) {
+        figureName = name;
+    }
+
+    public String getFigureName() {
+        return figureName;
     }
 
     @Override
     public boolean includesPoint(Point p){
-        return p.getX() > this.getTopLeft().getX() && p.getX() < this.getBottomRight().getX() &&
-                p.getY() > this.getTopLeft().getY() && p.getY() < this.getBottomRight().getY();
-    }
-
-    @Override
-    public Limits limits() {
-        return new Limits(topLeft, bottomRight);
+        return p.getX() > this.getLimits().getStart().getX() && p.getX() < this.getLimits().getEnd().getX() &&
+               p.getY() > this.getLimits().getStart().getY() && p.getY() < this.getLimits().getEnd().getY();
     }
 }

@@ -1,26 +1,30 @@
 package backend.model;
 
-public abstract class Figure {
+public abstract class Figure implements Comparable<Figure> {
+    private final Limits limits;
+    private int zIndex;
+
+    public Figure(Limits limits, int zIndex) {
+        this.limits = limits;
+        setZIndex(zIndex);
+    }
+
+    public void setZIndex(int zIndex) {
+        this.zIndex = zIndex;
+    }
+
+    public int getZIndex() {
+        return zIndex;
+    }
+
     public abstract boolean includesPoint(Point p);
 
-    // RETURNS THE SMALLEST RECTANGLE THAT INCLUDES THE LIMITS OF THE FIGURE. { startPoint, endPoint }
-    public abstract Limits limits();
+    public Limits getLimits() {
+        return limits;
+    }
 
-    public static class Limits {
-        private final Point start;
-        private final Point end;
-
-        public Limits(Point start, Point end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public Point getStart() {
-            return start;
-        }
-
-        public Point getEnd() {
-            return end;
-        }
+    @Override
+    public int compareTo(Figure other) {
+        return Integer.compare(this.zIndex, other.zIndex);
     }
 }

@@ -1,6 +1,6 @@
 package backend;
 
-import backend.drawable.DrawableFigure;
+import backend.model.Figure;
 import backend.model.Point;
 
 import java.util.*;
@@ -11,9 +11,9 @@ public class CanvasState {
     private int lowerZIndex = INITIAL_ZINDEX;
     private int higherZIndex = INITIAL_ZINDEX;
 
-    private final TreeSet<DrawableFigure> list = new TreeSet<>();
+    private final TreeSet<Figure> list = new TreeSet<>();
 
-    public void addFigure(DrawableFigure figure) {
+    public void addFigure(Figure figure) {
         list.add(figure);
     }
 
@@ -25,12 +25,12 @@ public class CanvasState {
         return --lowerZIndex;
     }
 
-    public Iterable<DrawableFigure> figures() {
+    public Iterable<Figure> figures() {
         return new TreeSet<>(list);
     }
 
-    public Optional<DrawableFigure> getFigure(Point p) {
-        for (DrawableFigure currentFigure : list.descendingSet()) {
+    public Optional<Figure> getFigure(Point p) {
+        for (Figure currentFigure : list.descendingSet()) {
             if (currentFigure.includesPoint(p)) {
                 return Optional.of(currentFigure);
             }
@@ -38,19 +38,19 @@ public class CanvasState {
         return Optional.empty();
     }
 
-    public void bringToFront(DrawableFigure figure) {
+    public void bringToFront(Figure figure) {
         remove(figure);
-        figure.setzIndex(getHigherZIndex());
+        figure.setZIndex(getHigherZIndex());
         addFigure(figure);
     }
 
-    public void sendToBack(DrawableFigure figure) {
+    public void sendToBack(Figure figure) {
         remove(figure);
-        figure.setzIndex(getLowerZIndex());
+        figure.setZIndex(getLowerZIndex());
         addFigure(figure);
     }
 
-    public void remove(DrawableFigure figure) {
+    public void remove(Figure figure) {
         list.remove(figure);
     }
 }
