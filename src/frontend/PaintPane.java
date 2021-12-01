@@ -106,8 +106,7 @@ public class PaintPane extends BorderPane {
 				noSelectionAlert();
 				return;
 			}
-
-			selector.getSelectedFigures().forEach(canvasState::sendToBack);
+			selector.getSelectedFigures().descendingSet().forEach(canvasState::sendToBack);
 			redrawCanvas();
 		});
 
@@ -261,7 +260,7 @@ public class PaintPane extends BorderPane {
 		private Point startPoint;
 		private Point endPoint;
 		
-		private final Set<DrawableFigure> figures = new HashSet<>();
+		private final TreeSet<DrawableFigure> figures = new TreeSet<>();
 
 		public void setStartPoint(Point startPoint) {
 			this.startPoint = startPoint;
@@ -333,7 +332,7 @@ public class PaintPane extends BorderPane {
 			return startPoint.getX() < endPoint.getX() && startPoint.getY() < endPoint.getY();
 		}
 
-		private Set<DrawableFigure> getSelectedFigures() {
+		private TreeSet<DrawableFigure> getSelectedFigures() {
 			return figures;
 		}
 	}

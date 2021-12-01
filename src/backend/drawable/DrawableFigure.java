@@ -63,17 +63,4 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
     public int compareTo(DrawableFigure o) {
         return Integer.compare(this.zIndex, o.zIndex);
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DrawableFigure that = (DrawableFigure) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
