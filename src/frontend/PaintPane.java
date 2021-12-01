@@ -158,6 +158,10 @@ public class PaintPane extends BorderPane {
 		});
 
 		canvas.setOnMouseReleased(event -> {
+			if (startPoint == null) {
+				return ;
+			}
+
 			Point endPoint = new Point(event.getX(), event.getY());
 
 			if (selectionButton.isSelected()) {
@@ -171,12 +175,12 @@ public class PaintPane extends BorderPane {
 					selectedFigures.forEach(label::append);
 					statusPane.updateStatus(label.toString());
 				}
-			} else if (!selectionButton.isSelected()) {
-				if (startPoint == null) {
-					return ;
-				}
+			} else {
 				DrawableFigure newFigure = null;
-				if (!(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY())) {
+				boolean validEndPoint = !(endPoint.getX() < startPoint.getX() || endPoint.getY() < startPoint.getY());
+				if (lineButton.isSelected()) {
+					newFigure = new DrawableLine(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
+				} else if (validEndPoint) {
 					if (rectangleButton.isSelected()) {
 						newFigure = new DrawableRectangle(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
 					}
@@ -189,20 +193,17 @@ public class PaintPane extends BorderPane {
 					} else if (ellipseButton.isSelected()) {
 						newFigure = new DrawableEllipse(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
 					}
-				}
-
-				if (lineButton.isSelected()) {
-					newFigure = new DrawableLine(startPoint, endPoint, canvasState.getHigherZIndex(), lineColor, fillColor, lineWidth);
-				}
-				if (newFigure == null){
+				} else {
 					return;
 				}
 				canvasState.addFigure(newFigure);
 			}
+
 			if (dragging) {
 				dragging = false;
 				selector.clearSelection();
 			}
+
 			startPoint = null;
 			redrawCanvas();
 		});
