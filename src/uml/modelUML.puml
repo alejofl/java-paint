@@ -1,0 +1,87 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package Java.lang <<Folder>>{
+    interface Comparable<Figure>
+}
+
+class Point {
+    - double x,y
+
+    + Point(double x, double y)
+    + double getX()
+    + double getY()
+    + String toString()
+    + void move(double x, double y)
+    + boolean equals(Object o)
+    + int hashCode()
+}
+
+class Limits {
+    - Point start, end
+
+    + Limits(Point start, Point end)
+    + Limits(Point start, double edge)
+    + Point getStart()
+    + Point getEnd()
+}
+
+Point *-- Limits
+
+abstract class Figure implements Comparable {
+    - Limits limits
+    - int zIndex
+
+    + Figure(Limits limits, int zIndex)
+    + void setZIndex(int zIndex)
+    + int getZIndex()
+    + {abstract} boolean includesPoint(Point p)
+    + Limits getLimits()
+    + int compareTo(Figure other)
+}
+
+Limits *-- Figure
+
+class Rectangle extends Figure {
+    - <u>String RECTANGLE = "Rectángulo"
+    - String figureName
+
+    + Rectangle(Limits limits, int zIndex)
+    + String toString()
+    + void setFigureName(String name)
+    + String getFigureName()
+    + boolean includesPoint(Point p)
+}
+
+class Square extends Rectangle {
+    - <u>String SQUARE = "Cuadrado"
+    + Square(Limits limits, int zIndex)
+}
+
+class Ellipse extends Figure {
+    - String stringInfo
+    - final double xRadius, yRadius
+
+    + Ellipse(Limits limits, int zIndex)
+    + Point getCenterPoint()
+    + double getXRadius()
+    + double getYRadius()
+    + String createStringInfo()
+    + void setStringInfo(String stringInfo)
+    + String toString()
+    + boolean includesPoint(Point p)
+}
+
+class Circle extends Ellipse {
+    + Circle(Limits limits, int zIndex)
+    + String toString()
+}
+
+class Line extends Figure {
+    + Line(Limits limits, int zIndex)
+    - double distanceBetweenPoints(Point p1, Point p2)
+    + String toString()
+    + boolean includesPoint(Point p)
+}
+
+@enduml

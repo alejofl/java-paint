@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package model <<Folder>>{
+    class Point
+    class Limits
+    abstract class Figure
+    class Rectangle
+    class Square
+    class Ellipse
+    class Circle
+    class Line
+}
+
+class CanvasState {
+    - <u>int INITIAL_ZINDEX = 0
+    - int lowerZIndex = INITIAL_ZINDEX
+    - int higherZIndex = INITIAL_ZINDEX
+    - TreeSet<Figure> list
+
+    + void addFigure(Figure figure)
+    + int getHigherZIndex()
+    + int getLowerZIndex()
+    + Iterable<Figure> figures()
+    + Optional<Figure> getFigure(Point p)
+    + void bringToFront(Figure figure)
+    + void sendToBack(Figure figure)
+    + void remove(Figure figure)
+}
+
+Figure *-- CanvasState
+
+@enduml
