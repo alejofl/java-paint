@@ -12,6 +12,10 @@ public class DrawableRectangle extends DrawableFigure {
         this(new Rectangle(topLeft, bottomRight), zIndex, strokeColor, fillColor, lineWidth);
     }
 
+    // Si se tiene seleccionado el boton Rectangulo, figure apuntará a un objeto de tipo Rectangle
+    // (proviente del constructor de arriba). En cambio, si se tiene seleccionado el boton Cuadrado, figure
+    // apuntará a un objeto de tipo Square (que proviene del constructor de DrawableSquare)
+    // En base a ello, dependerá lo que devolverá el toString()
     public DrawableRectangle(Rectangle figure, int zIndex, Color strokeColor, Color fillColor, double lineWidth){
         super(zIndex, strokeColor, fillColor, lineWidth);
         this.figure = figure;
