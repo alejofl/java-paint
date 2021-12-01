@@ -1,7 +1,6 @@
 package frontend;
 
 import backend.CanvasState;
-//import backend.drawable.DrawableCircle;
 import backend.drawable.*;
 import backend.model.Figure;
 import backend.model.Point;
@@ -17,10 +16,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class PaintPane extends BorderPane {
 
@@ -112,7 +108,6 @@ public class PaintPane extends BorderPane {
 			}
 
 			selector.getSelectedFigures().forEach(canvasState::sendToBack);
-			selector.clearSelection();
 			redrawCanvas();
 		});
 
@@ -122,7 +117,6 @@ public class PaintPane extends BorderPane {
 				return;
 			}
 			selector.getSelectedFigures().forEach(canvasState::bringToFront);
-			selector.clearSelection();
 			redrawCanvas();
 		});
 
@@ -211,18 +205,14 @@ public class PaintPane extends BorderPane {
 		canvas.setOnMouseMoved(event -> {
 			Point eventPoint = new Point(event.getX(), event.getY());
 			Optional<DrawableFigure> figureFound = canvasState.getFigure(eventPoint);
-			if (figureFound.isPresent()) {
-				statusPane.updateStatus(figureFound.get().toString());
-			} else {
-				statusPane.updateStatus(eventPoint.toString());
-			}
+			statusPane.updateStatus(figureFound.isPresent() ? figureFound.get().toString() : eventPoint.toString());
 		});
 
 		canvas.setOnMouseDragged(event -> {
-			Point eventPoint = new Point(event.getX(), event.getY());
 			if (dragging) {
-				double diffX = (eventPoint.getX() - startPoint.getX()) / 100;
-				double diffY = (eventPoint.getY() - startPoint.getY()) / 100;
+				double diffX = (event.getX() - startPoint.getX());
+				double diffY = (event.getY() - startPoint.getY());
+				startPoint.move(diffX,diffY);
 				selector.moveSelection(diffX, diffY);
 				redrawCanvas();
 			}
@@ -264,15 +254,14 @@ public class PaintPane extends BorderPane {
 			return;
 		}
 		selector.getSelectedFigures().forEach(canvasState::remove);
-		selector.clearSelection();
-		redrawCanvas();
+		clearSelectionAndRedraw();
 	}
 
 	private class SelectionHandler {
 		private Point startPoint;
 		private Point endPoint;
 		
-		private final Set<DrawableFigure> figures = new TreeSet<>();
+		private final Set<DrawableFigure> figures = new HashSet<>();
 
 		public void setStartPoint(Point startPoint) {
 			this.startPoint = startPoint;
@@ -329,8 +318,6 @@ public class PaintPane extends BorderPane {
 
 		public void moveSelection(double diffX, double diffY) {
 			if (startPoint != null && endPoint != null) {
-				startPoint.move(diffX, diffY);
-				endPoint.move(diffX, diffY);
 				getSelectedFigures().forEach(figure -> figure.move(diffX, diffY));
 			}
 		}

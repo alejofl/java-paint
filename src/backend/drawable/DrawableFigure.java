@@ -4,7 +4,11 @@ import backend.model.Figure;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.Objects;
+
 public abstract class DrawableFigure extends Figure implements Comparable<DrawableFigure> {
+    private static int COUNTER = 1000;
+    private int id;
     protected Color strokeColor;
     protected Color fillColor;
     protected double lineWidth;
@@ -16,6 +20,7 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
         this.strokeColor = strokeColor;
         this.fillColor = fillColor;
         this.lineWidth = lineWidth;
+        this.id = COUNTER++;
     }
 
     public void setStrokeColor(Color strokeColor) {
@@ -57,5 +62,18 @@ public abstract class DrawableFigure extends Figure implements Comparable<Drawab
     @Override
     public int compareTo(DrawableFigure o) {
         return Integer.compare(this.zIndex, o.zIndex);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DrawableFigure that = (DrawableFigure) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
