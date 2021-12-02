@@ -7,7 +7,7 @@ import java.util.*;
 
 
 public class CanvasState {
-    private static int INITIAL_ZINDEX = 0;
+    private static final int INITIAL_ZINDEX = 0;
     private int lowerZIndex = INITIAL_ZINDEX;
     private int higherZIndex = INITIAL_ZINDEX;
 

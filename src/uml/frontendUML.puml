@@ -75,7 +75,7 @@ class PaintPane extends BorderPane {
     - ImageView createButtonGraphic(String imageName)
     - void noSelectionAlert()
     - void clearSelectionAndRedraw()
-    # void deleteFigure
+    # void deleteFigure()
 }
 
 class SelectionHandler {

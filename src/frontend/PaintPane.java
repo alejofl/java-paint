@@ -24,6 +24,7 @@ public class PaintPane extends BorderPane {
 	// BackEnd
 	private final CanvasState canvasState;
 
+	// Drawing variables
 	private static final Color DEFAULT_LINE_COLOR = Color.BLACK;
 	private static final Color DEFAULT_FILL_COLOR = Color.YELLOW;
 	private static final double DEFAULT_LINE_WIDTH = 1;
@@ -33,7 +34,7 @@ public class PaintPane extends BorderPane {
 	private Color fillColor = DEFAULT_FILL_COLOR;
 	private double lineWidth = DEFAULT_LINE_WIDTH;
 
-	// Botones Barra Izquierda
+	// SideBar buttons
 	private final ToggleButton selectionButton = new ToggleButton("Seleccionar", createButtonGraphic("select"));
 	private final ToggleButton rectangleButton = new ToggleButton("Rectángulo", createButtonGraphic("rectangle"));
 	private final ToggleButton circleButton = new ToggleButton("Círculo", createButtonGraphic("circle"));
@@ -44,17 +45,20 @@ public class PaintPane extends BorderPane {
 	private final Button sendToBackButton = new Button("Al Fondo", createButtonGraphic("send-to-back"));
 	private final Button bringToFrontButton = new Button("Al Frente", createButtonGraphic("bring-to-front"));
 
+	// Selection handler
 	private final SelectionHandler selector = new SelectionHandler();
 
+	// Point where the user pressed
 	private Point startPoint;
 
 	// StatusBar
 	private final StatusPane statusPane;
 
-	// dragging variable for more consistent element dragging
+	// For more consistent element dragging
 	private boolean dragging = false;
 
 	public PaintPane(CanvasState canvasState, StatusPane statusPane) {
+		// UI creation
 		this.canvasState = canvasState;
 		this.statusPane = statusPane;
 		ToggleButton[] togglesArr = {selectionButton, squareButton, rectangleButton, circleButton, ellipseButton, lineButton};
@@ -98,6 +102,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(new Label("Relleno"));
 		buttonsBox.getChildren().add(fillColorPicker);
 
+		// Event Listeners
 		deleteButton.setOnAction(event -> {
 			deleteFigure();
 		});
@@ -217,10 +222,15 @@ public class PaintPane extends BorderPane {
 				redrawCanvas();
 			}
 		});
+
+		// UI
 		setLeft(buttonsBox);
 		setRight(canvas);
 	}
 
+	/**
+	 * Method in charge of displaying all the figures in the canvas
+	 */
 	private void redrawCanvas() {
 		gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -230,11 +240,19 @@ public class PaintPane extends BorderPane {
 		}
 	}
 
+	/**
+	 * Method used to create the JavaFX image that goes in every button in the UI
+	 * @param imageName the name of the image, without extension. Must be placed in resources package
+	 * @return JavaFX's ImageView with the desired image
+	 */
 	private ImageView createButtonGraphic(String imageName) {
 		Image img = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/resources/" + imageName + ".png")));
 		return new ImageView(img);
 	}
 
+	/**
+	 * Method used to display an alert in case that a button that requires a selection is pressed without a figure selected
+	 */
 	private void noSelectionAlert() {
 		Alert alert = new Alert(Alert.AlertType.ERROR);
 		alert.setTitle("Error");
@@ -243,11 +261,17 @@ public class PaintPane extends BorderPane {
 		alert.showAndWait();
 	}
 
+	/**
+	 * Self-explanatory
+	 */
 	private void clearSelectionAndRedraw() {
 		selector.clearSelection();
 		redrawCanvas();
 	}
 
+	/**
+	 * Method used to delete function. Will be called if button is clicked and if Backspace/Delete keys are pressed
+	 */
 	protected void deleteFigure() {
 		if (selector.noSelection()) {
 			noSelectionAlert();
@@ -257,16 +281,27 @@ public class PaintPane extends BorderPane {
 		clearSelectionAndRedraw();
 	}
 
+	/**
+	 * Class in charge of handling selection. Will decide what figures are selected after releasing mouse
+	 */
 	private class SelectionHandler {
 		private Point startPoint;
 		private Point endPoint;
 		
 		private final TreeSet<Figure> figures = new TreeSet<>();
 
+		/**
+		 * Will be called when mouse is pressed
+		 * @param startPoint the top left point of the selection
+		 */
 		public void setStartPoint(Point startPoint) {
 			this.startPoint = startPoint;
 		}
 
+		/**
+		 * Will be called when mouse is released. Will decide if user clicked or dragged in the screen, and act accordingly
+		 * @param endPoint - the bottom right point of the selection
+		 */
 		public void setEndPoint(Point endPoint) {
 			this.endPoint = endPoint;
 
@@ -281,22 +316,39 @@ public class PaintPane extends BorderPane {
 			}
 		}
 
+		/**
+		 * Boolean function that determines if something is selected
+		 * @return true if nothing is selected and false otherwise
+		 */
 		public boolean noSelection() {
 			return figures.isEmpty();
 		}
 
+		/**
+		 * Will clear selection and leave the handler idle for a new selection
+		 */
 		public void clearSelection() {
 			startPoint = null;
 			endPoint = null;
 			figures.clear();
 		}
 
+		/**
+		 * Called when user selected one or more figures and dragged them
+		 * @param diffX how much figure(s) must be moved in the X axis
+		 * @param diffY how much figure(s) must be moved in the Y axis
+		 */
 		public void moveSelection(double diffX, double diffY) {
 			if (startPoint != null && endPoint != null) {
 				getSelectedFigures().forEach(figure -> ((Movable) figure).move(diffX, diffY));
 			}
 		}
 
+		/**
+		 * Will determine if a point is inside de imaginary rectangle of selection
+		 * @param point the point in question
+		 * @return true if point is in selection and false otherwise
+		 */
 		public boolean isPointInSelection(Point point) {
 			return (startPoint != null && endPoint != null) && startPoint.getX() < point.getX() &&
 					startPoint.getY() < point.getY() &&
@@ -304,18 +356,34 @@ public class PaintPane extends BorderPane {
 					point.getY() < endPoint.getY();
 		}
 
+		/**
+		 * Used to retrieve the selected figures
+		 * @return a TreeSet of the selected figures
+		 */
 		public TreeSet<Figure> getSelectedFigures() {
 			return figures;
 		}
 
+		/**
+		 * Internal use. Used to determine if the selection was created correctly (from top left to bottom right)
+		 * @return true if selection is valid and false otherwise
+		 */
 		private boolean isSelectionValid() {
 			return startPoint.getX() < endPoint.getX() && startPoint.getY() < endPoint.getY();
 		}
 
+		/**
+		 * Internal use. Used to determine if the user clicked or dragged
+		 * @return true if user clicked and false otherwise
+		 */
 		private boolean isClick() {
 			return startPoint != null && startPoint.equals(endPoint);
 		}
 
+		/**
+		 * Internal use. Used to select the figure if user clicked
+		 * @param point where the user clicked
+		 */
 		private void selectFigure(Point point) {
 			Optional<Figure> figureFound = canvasState.getFigure(point);
 			figureFound.ifPresent(figure -> {
@@ -326,6 +394,11 @@ public class PaintPane extends BorderPane {
 			});
 		}
 
+		/**
+		 * Internal use. Used to determine if a whole figure is inside selection. Called if user dragged
+		 * @param figure the figure in question
+		 * @return true if figure is inside selection and false otherwise
+		 */
 		private boolean isFigureInSelection(Figure figure) {
 			Limits limits = figure.getLimits();
 			if (startPoint == null || endPoint == null) {
