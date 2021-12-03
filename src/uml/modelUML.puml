@@ -14,6 +14,7 @@ class Point {
     + String toString()
     + void move(double x, double y)
     + boolean equals(Object o)
+    + double distanceTo(Point p)
     + int hashCode()
 }
 
@@ -79,7 +80,6 @@ class Circle extends Ellipse {
 
 class Line extends Figure {
     + Line(Point start, Point end, int zIndex)
-    - double distanceBetweenPoints(Point p1, Point p2)
     + String toString()
     + boolean includesPoint(Point p)
 }
