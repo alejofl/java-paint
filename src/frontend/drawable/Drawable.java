@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 public interface Drawable {
     Color SELECTED_COLOR = Color.RED;
 
+    // Defines how figures will be drawn on the canvas
     default void draw(GraphicsContext gc, boolean selected) {
         if (selected) {
             gc.setStroke(SELECTED_COLOR);
@@ -22,6 +23,7 @@ public interface Drawable {
 
     DrawConfiguration getDrawConfiguration();
 
+    // Any class that implements Drawable, must define how will its area and border be drawn
     void drawFill(GraphicsContext gc);
 
     void drawStroke(GraphicsContext gc);

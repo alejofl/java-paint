@@ -7,15 +7,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class DrawableEllipse extends Ellipse implements Drawable, Movable {
-    private DrawConfiguration config;
+    private final DrawConfiguration config;
+
     public DrawableEllipse(Point topLeft, Point bottomRight, int zIndex, Color strokeColor, Color fillColor, double lineWidth){
         this(new Ellipse(new Limits(topLeft, bottomRight), zIndex), strokeColor, fillColor, lineWidth);
     }
 
-    // Si se tiene seleccionado el boton Elipse, figure apuntará a un objeto de tipo Ellipse
-    // (proviente del constructor de arriba). En cambio, si se tiene seleccionado el boton Circulo, figure
-    // apuntará a un objeto de tipo Circle (que proviene del constructor de DrawableCircle)
-    // En base a ello, dependerá lo que devolverá el toString()
+    // If Ellipse button is selected, 'figure' will store an Ellipse object coming from the first constructor
+    // Instead, if Circle button is selected, 'figure' will store a Circle object coming from DrawableCircle's constructor
+    // Based on this, what toString() method returns will depend on it
     public DrawableEllipse(Ellipse figure, Color strokeColor, Color fillColor, double lineWidth){
         super(figure.getLimits(), figure.getZIndex());
         setStringInfo(figure.createStringInfo());

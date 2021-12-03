@@ -7,15 +7,15 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class DrawableRectangle extends Rectangle implements Drawable, Movable {
-    DrawConfiguration config;
+    private final DrawConfiguration config;
+
     public DrawableRectangle(Point topLeft, Point bottomRight, int zIndex, Color strokeColor, Color fillColor, double lineWidth) {
         this(new Rectangle(new Limits(topLeft, bottomRight), zIndex), strokeColor, fillColor, lineWidth);
     }
 
-    // Si se tiene seleccionado el boton Rectangulo, figure apuntará a un objeto de tipo Rectangle
-    // (proviente del constructor de arriba). En cambio, si se tiene seleccionado el boton Cuadrado, figure
-    // apuntará a un objeto de tipo Square (que proviene del constructor de DrawableSquare)
-    // En base a ello, dependerá lo que devolverá el toString()
+    // If Rectangle button is selected, 'figure' will store a Rectangle object coming from the first constructor
+    // Instead, if Square button is selected, 'figure' will store a Square object coming from DrawableSquare's constructor
+    // Based on this, what toString() method returns will depend on it
     public DrawableRectangle(Rectangle figure, Color strokeColor, Color fillColor, double lineWidth){
         super(figure.getLimits(), figure.getZIndex());
         setFigureName(figure.getFigureName());

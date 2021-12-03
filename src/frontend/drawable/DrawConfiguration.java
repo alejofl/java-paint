@@ -2,6 +2,7 @@ package frontend.drawable;
 
 import javafx.scene.paint.Color;
 
+// Indicates the visual properties of a figure to be drawn
 public class DrawConfiguration {
     private Color fillColor;
     private Color lineColor;
