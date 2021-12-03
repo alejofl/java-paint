@@ -4,11 +4,15 @@ public class Square extends Rectangle {
 
     private final static String SQUARE = "Cuadrado";
 
-    // As square is a particular type of rectangle, we just reuse Rectangle class behaviour and change figureName string
-    public Square(Limits limits, int zIndex){
-        // Dentro de la clase Square creo el punto bottomRight el cual consiste en sumar la longitud
-        // del lado, en ambas componentes del punto topLeft
-        super(limits, zIndex);
+    /**
+     * As square is a particular type of rectangle, we just reuse Rectangle class behaviour and change figureName string
+     * @param topLeft topLeft point of the square
+     * @param edge edge of square
+     * @param zIndex depth
+     */
+    public Square(Point topLeft, double edge, int zIndex){
+        // Inside the square constructor we build the topLeft point and a point equidistant to that point
+        super(topLeft, topLeft.getEquidistantPoint(edge), zIndex);
         setFigureName(SQUARE);
     }
 }

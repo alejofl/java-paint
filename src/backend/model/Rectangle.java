@@ -5,8 +5,14 @@ public class Rectangle extends Figure {
     private final static String RECTANGLE = "Rectángulo";
     private String figureName;
 
-    public Rectangle(Limits limits, int zIndex) {
-        super(limits, zIndex);
+    /**
+     * Rectangle model
+     * @param topLeft topLeft point of the rectangle
+     * @param bottomRight bottomRight point of the rectangle
+     * @param zIndex depth of the rectangle
+     */
+    public Rectangle(Point topLeft, Point bottomRight, int zIndex) {
+        super(new Limits(topLeft, bottomRight), zIndex);
         setFigureName(RECTANGLE);
     }
 

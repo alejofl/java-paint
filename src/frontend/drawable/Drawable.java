@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 public interface Drawable {
     Color SELECTED_COLOR = Color.RED;
 
-    // Defines how figures will be drawn on the canvas
+    // Defines how figures will be drawn on the canvas. Uses a default selected color if figure is selected
     default void draw(GraphicsContext gc, boolean selected) {
         if (selected) {
             gc.setStroke(SELECTED_COLOR);

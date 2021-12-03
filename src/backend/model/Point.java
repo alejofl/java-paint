@@ -42,6 +42,10 @@ public class Point {
         return Math.sqrt(Math.pow(other.getX() - getX(), 2) + Math.pow(other.getY() - getY(), 2));
     }
 
+    public Point getEquidistantPoint(double distance) {
+        return new Point(getX() + distance, getY() + distance);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(x, y);

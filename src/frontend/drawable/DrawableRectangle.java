@@ -10,14 +10,14 @@ public class DrawableRectangle extends Rectangle implements Drawable, Movable {
     private final DrawConfiguration config;
 
     public DrawableRectangle(Point topLeft, Point bottomRight, int zIndex, Color strokeColor, Color fillColor, double lineWidth) {
-        this(new Rectangle(new Limits(topLeft, bottomRight), zIndex), strokeColor, fillColor, lineWidth);
+        this(new Rectangle(topLeft, bottomRight, zIndex), strokeColor, fillColor, lineWidth);
     }
 
     // If Rectangle button is selected, 'figure' will store a Rectangle object coming from the first constructor
     // Instead, if Square button is selected, 'figure' will store a Square object coming from DrawableSquare's constructor
-    // Based on this, what toString() method returns will depend on it
+    // Based on this, what toString() method returns will depend on the figure it creates
     public DrawableRectangle(Rectangle figure, Color strokeColor, Color fillColor, double lineWidth){
-        super(figure.getLimits(), figure.getZIndex());
+        super(figure.getLimits().getStart(), figure.getLimits().getEnd(), figure.getZIndex());
         setFigureName(figure.getFigureName());
         this.config = new DrawConfiguration(fillColor, strokeColor, lineWidth);
     }

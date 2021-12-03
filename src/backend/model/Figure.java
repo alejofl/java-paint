@@ -6,6 +6,11 @@ public abstract class Figure implements Comparable<Figure> {
     private final Limits limits;
     private int zIndex;
 
+    /**
+     * Abstract class that models all figures as the rectangle that encompasses the respective figure.
+     * @param limits limits of the figure
+     * @param zIndex depth of figure
+     */
     public Figure(Limits limits, int zIndex) {
         this.limits = limits;
         setZIndex(zIndex);

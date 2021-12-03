@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/class-diagram
 
-package Java.lang <<Folder>>{
+package java.lang <<Folder>>{
     interface Comparable<Figure>
 }
 
@@ -46,7 +46,7 @@ class Rectangle extends Figure {
     - <u>String RECTANGLE = "Rectángulo"
     - String figureName
 
-    + Rectangle(Limits limits, int zIndex)
+    + Rectangle(Point topLeft, Point bottomRight, int zIndex)
     + String toString()
     + void setFigureName(String name)
     + String getFigureName()
@@ -55,14 +55,14 @@ class Rectangle extends Figure {
 
 class Square extends Rectangle {
     - <u>String SQUARE = "Cuadrado"
-    + Square(Limits limits, int zIndex)
+    + Square(Point topLeft, double edge, int zIndex)
 }
 
 class Ellipse extends Figure {
     - String stringInfo
     - final double xRadius, yRadius
 
-    + Ellipse(Limits limits, int zIndex)
+    + Ellipse(Point topLeft, Point bottomRight, int zIndex)
     + Point getCenterPoint()
     + double getXRadius()
     + double getYRadius()
@@ -73,12 +73,12 @@ class Ellipse extends Figure {
 }
 
 class Circle extends Ellipse {
-    + Circle(Limits limits, int zIndex)
+    + Circle(Point topLeft, double diameter, int zIndex)
     + String toString()
 }
 
 class Line extends Figure {
-    + Line(Limits limits, int zIndex)
+    + Line(Point start, Point end, int zIndex)
     - double distanceBetweenPoints(Point p1, Point p2)
     + String toString()
     + boolean includesPoint(Point p)

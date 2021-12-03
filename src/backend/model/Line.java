@@ -2,8 +2,8 @@ package backend.model;
 
 public class Line extends Figure {
 
-    public Line(Limits limits, int zIndex){
-        super(limits, zIndex);
+    public Line(Point start, Point end, int zIndex){
+        super(new Limits(start, end), zIndex);
     }
 
     @Override

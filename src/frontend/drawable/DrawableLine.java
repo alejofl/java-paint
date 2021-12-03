@@ -10,7 +10,7 @@ public class DrawableLine extends Line implements Drawable, Movable {
     private final DrawConfiguration config;
 
     public DrawableLine(Point p1, Point p2, int zIndex, Color strokeColor, Color fillColor, double lineWidth){
-        super(new Limits(p1,p2), zIndex);
+        super(p1, p2, zIndex);
         this.config = new DrawConfiguration(fillColor, strokeColor, lineWidth);
     }
 

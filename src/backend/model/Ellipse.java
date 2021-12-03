@@ -5,9 +5,14 @@ public class Ellipse extends Figure {
     private String stringInfo;
     private final double xRadius, yRadius;
 
-    // An ellipse will be defined by the limits of the rectangle that encloses it
-    public Ellipse(Limits limits, int zIndex){
-        super(limits, zIndex);
+    /**
+     * An ellipse will be defined by the limits of the rectangle that encloses it
+     * @param topLeft topLeft of imaginary rectangle that encompasses the ellipse
+     * @param bottomRight bottomRight of imaginary rectangle that encompasses the ellipse
+     * @param zIndex depth of ellipse
+     */
+    public Ellipse(Point topLeft, Point bottomRight, int zIndex){
+        super(new Limits(topLeft, bottomRight), zIndex);
         this.xRadius = (this.getLimits().getEnd().getX() - this.getLimits().getStart().getX()) / 2;
         this.yRadius = (this.getLimits().getEnd().getY() - this.getLimits().getStart().getY()) / 2;
         stringInfo = createStringInfo();
