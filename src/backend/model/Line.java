@@ -14,7 +14,7 @@ public class Line extends Figure {
 
     @Override
     public boolean includesPoint(Point p){
-        // Deduccion Matematica: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line
+        // A mathematical explanation of why this works: https://stackoverflow.com/questions/17692922/check-is-a-point-x-y-is-between-two-points-drawn-on-a-straight-line
         return Double.compare((getLimits().getStart().distanceTo(p)) + (getLimits().getEnd().distanceTo(p)),
                 (getLimits().getStart().distanceTo(getLimits().getEnd()))) == 0;
     }

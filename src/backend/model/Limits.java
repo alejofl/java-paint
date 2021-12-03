@@ -1,5 +1,6 @@
 package backend.model;
 
+// Defines the limits of a figure using two points
 public class Limits {
 
     private final Point start;

@@ -5,6 +5,7 @@ public class Ellipse extends Figure {
     private String stringInfo;
     private final double xRadius, yRadius;
 
+    // An ellipse will be defined by the limits of the rectangle that encloses it
     public Ellipse(Limits limits, int zIndex){
         super(limits, zIndex);
         this.xRadius = (this.getLimits().getEnd().getX() - this.getLimits().getStart().getX()) / 2;
@@ -12,15 +13,24 @@ public class Ellipse extends Figure {
         stringInfo = createStringInfo();
     }
 
+    /**
+     * @return the ellipse's center point
+     */
     public Point getCenterPoint(){
         return new Point(this.getLimits().getStart().getX() + this.xRadius,
                          this.getLimits().getStart().getY() + this.yRadius);
     }
 
+    /**
+     * @return the ellipse's radius in x-axis
+     */
     public double getXRadius(){
         return this.xRadius;
     }
 
+    /**
+     * @return the ellipse's radius in y-axis
+     */
     public double getYRadius() {
         return this.yRadius;
     }
@@ -34,6 +44,8 @@ public class Ellipse extends Figure {
         this.stringInfo = stringInfo;
     }
 
+    // For the same reason that happens with Rectangle and Square, we must define
+    // a String that contains the text to print depending if the figure is an Ellipse or a Circle
     @Override
     public String toString() {
         return stringInfo;
@@ -41,7 +53,7 @@ public class Ellipse extends Figure {
 
     @Override
     public boolean includesPoint(Point p){
-        // Deduccion matemática: https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse#:~:text=The%20region%20(disk)%20bounded%20by,it%20is%20outside%20the%20ellipse.
+        // A mathematical explanation of why this works: https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse#:~:text=The%20region%20(disk)%20bounded%20by,it%20is%20outside%20the%20ellipse.
         return (Math.pow((p.getX() - this.getCenterPoint().getX()) / this.xRadius, 2) +
                 Math.pow((p.getY() - this.getCenterPoint().getY()) / this.yRadius, 2)) <= 1;
     }

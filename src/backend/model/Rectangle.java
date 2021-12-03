@@ -10,6 +10,7 @@ public class Rectangle extends Figure {
         setFigureName(RECTANGLE);
     }
 
+    // In order to reuse this method in Square class, we must define a String which value will depend on the figure used
     @Override
     public String toString() {
         return String.format("%s [ %s , %s ]", figureName, getLimits().getStart(), getLimits().getEnd());

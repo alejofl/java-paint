@@ -2,6 +2,8 @@ package backend.model;
 
 public class Circle extends Ellipse {
 
+    // A Circle is a type of Ellipse, so we reuse Ellipse's behaviour
+    // We just change the string to print
     public Circle(Limits limits, int zIndex){
         super(limits, zIndex);
     }
