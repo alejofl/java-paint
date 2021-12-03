@@ -50,7 +50,7 @@ public class Ellipse extends Figure {
     }
 
     // For the same reason that happens with Rectangle and Square, we must define
-    // a String that contains the text to print depending if the figure is an Ellipse or a Circle
+    // a String that contains the text to print depending on if the figure is an Ellipse or a Circle
     @Override
     public String toString() {
         return stringInfo;

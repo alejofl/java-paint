@@ -103,9 +103,7 @@ public class PaintPane extends BorderPane {
 		buttonsBox.getChildren().add(fillColorPicker);
 
 		// Event Listeners
-		deleteButton.setOnAction(event -> {
-			deleteFigure();
-		});
+		deleteButton.setOnAction(event -> deleteFigure());
 
 		sendToBackButton.setOnAction(event -> {
 			if (selector.noSelection()) {

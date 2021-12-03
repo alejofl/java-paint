@@ -1,6 +1,5 @@
 package frontend.drawable;
 
-import backend.model.Limits;
 import backend.model.Line;
 import backend.model.Point;
 import javafx.scene.canvas.GraphicsContext;

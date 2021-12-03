@@ -1,7 +1,6 @@
 package frontend.drawable;
 
 import backend.model.Ellipse;
-import backend.model.Limits;
 import backend.model.Point;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
