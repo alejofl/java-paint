@@ -28,7 +28,7 @@ public class AppMenuBar extends MenuBar {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Acerca De");
             alert.setHeaderText("Paint");
-            alert.setContentText("TPE Final POO Diciembre 2021");
+            alert.setContentText("TPE Final - POO - Diciembre 2021\nPor Axel Preiti Tasat, Federico Shih & Alejo Flores Lucey");
             alert.showAndWait();
         });
         help.getItems().add(aboutMenuItem);
