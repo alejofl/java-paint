@@ -39,7 +39,7 @@ public class PaintPane extends BorderPane {
 	private final ToggleButton rectangleButton = new ToggleButton("Rectángulo", createButtonGraphic("rectangle"));
 	private final ToggleButton circleButton = new ToggleButton("Círculo", createButtonGraphic("circle"));
 	private final ToggleButton squareButton = new ToggleButton("Cuadrado", createButtonGraphic("square"));
-	private final ToggleButton ellipseButton = new ToggleButton("Elípse", createButtonGraphic("ellipse"));
+	private final ToggleButton ellipseButton = new ToggleButton("Elipse", createButtonGraphic("ellipse"));
 	private final ToggleButton lineButton = new ToggleButton("Línea", createButtonGraphic("line"));
 	private final Button deleteButton = new Button("Borrar", createButtonGraphic("delete"));
 	private final Button sendToBackButton = new Button("Al Fondo", createButtonGraphic("send-to-back"));
@@ -342,7 +342,7 @@ public class PaintPane extends BorderPane {
 		}
 
 		/**
-		 * Will determine if a point is inside de imaginary rectangle of selection
+		 * Will determine if a point is inside an imaginary rectangle of selection
 		 * @param point the point in question
 		 * @return true if point is in selection and false otherwise
 		 */
