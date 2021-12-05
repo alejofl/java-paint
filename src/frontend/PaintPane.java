@@ -74,7 +74,6 @@ public class PaintPane extends BorderPane {
 		for (Button tool : buttonsArr) {
 			tool.setMinWidth(120);
 			tool.setCursor(Cursor.HAND);
-			tool.setOnAction(event -> clearSelectionAndRedraw());
 		}
 		VBox buttonsBox = new VBox(10);
 		buttonsBox.setPadding(new Insets(5));
